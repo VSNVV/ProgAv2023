@@ -1,15 +1,18 @@
 package concurrencia;
 
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
-    Log log;
+    private Log log;
     //todas las zonas y mierdas aqui, se construyen en el constructor
-    ReentrantLock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
-    ReentrantLock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
-    ReentrantLock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
+    private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
+    private Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
+    private Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
+    private AlmacenComida almacenComida;
+    private ZonaComer zonaComer;
 
     //Métodos de la clase colonia
 
@@ -17,6 +20,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     public Colonia(Log log){
         this.log = log;
         //Crear aqui todas las zonas, para luego en distribuida pasar un solo objeto que tenga toda la parte concurrente
+        this.almacenComida = new AlmacenComida(log);
     }
 
     //Método para entrar a la colonia
@@ -55,6 +59,11 @@ public class Colonia { //Recurso compartido por todos los hilos
     public Log getLog(){
         return this.log;
     }
-
+    public AlmacenComida getAlmacenComida(){
+        return this.almacenComida;
+    }
+    public ZonaComer getZonaComer(){
+        return this.zonaComer;
+    }
 
 }
