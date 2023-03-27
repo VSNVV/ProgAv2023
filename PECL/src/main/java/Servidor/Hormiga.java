@@ -14,4 +14,9 @@ public class Hormiga extends Thread{
         this.identificador = indentificador;
         this.tipo = tipo;
     }
+
+    //Método run
+    public void run(){
+        //efljdslkfjg
+    }
 }
