@@ -9,5 +9,8 @@
         <module name="PECL" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PECL" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
