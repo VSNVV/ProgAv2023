@@ -7,13 +7,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
-    private Log log;
-    //todas las zonas y mierdas aqui, se construyen en el constructor
+    private boolean invasionInsecto = false;
+    private Log log; //Log del sistema concurrente
     private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
     private Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
     private Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
-    private AlmacenComida almacenComida;
-    private ZonaComer zonaComer;
+    private AlmacenComida almacenComida; //Almacen de comida de la colonia
+    private ZonaComer zonaComer; //Zona para comer de la colonia
+    private ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
+    private ZonaDescanso zonaDescanso; //Zona de descanso de la colonia
 
     //Métodos de la clase colonia
 
@@ -27,6 +29,8 @@ public class Colonia { //Recurso compartido por todos los hilos
         //Crear aqui todas las zonas, para luego en distribuida pasar un solo objeto que tenga toda la parte concurrente
         this.almacenComida = new AlmacenComida(log, jTextFieldUnidadesComidaAlmacen, jTextFieldHormigasAlmacenComida);
         this.zonaComer = new ZonaComer(log, jTextFieldUnidadesComidaZonaComer, jTextFieldHormiasLlevandoComida, jTextFieldHormigasZonaComer);
+        this.zonaInstruccion = new ZonaInstruccion(log, jTextFieldHormigasHaciendoInstruccion);
+        this.zonaDescanso = new ZonaDescanso(log, jTextFieldHormigasDescansando);
 
     }
 
@@ -72,5 +76,18 @@ public class Colonia { //Recurso compartido por todos los hilos
     public ZonaComer getZonaComer(){
         return this.zonaComer;
     }
+    public ZonaInstruccion getZonaInstruccion(){
+        return this.zonaInstruccion;
+    }
+    public ZonaDescanso getZonaDescanso(){
+        return this.zonaDescanso;
+    }
 
+    public boolean isInvasionInsecto() {
+        return this.invasionInsecto;
+    }
+
+    public void setInvasionInsecto(boolean invasionInsecto){
+        this.invasionInsecto = invasionInsecto;
+    }
 }
