@@ -3,7 +3,7 @@ package concurrencia;
 public class Hormiga extends Thread{
     //Atributos de la clase Hormiga
     private String identificador;
-    private int numIdentificador;
+    private int numIdentificador, numIteraciones = 0;
     private String tipo;
     private Colonia colonia;
     private Log log;
@@ -81,9 +81,34 @@ public class Hormiga extends Thread{
                 }
             }
         }
-        else if (this.getTipo() == "Soldado"){
-            //Verificamos que la hormiga es de tipo soldada
-
+        else if (this.getTipo() == "Soldada"){
+            while (true){
+                //Verificamos que la hormiga es de tipo soldada
+                //Una vez dentro de la colonia, se irán a la zona de instrucción
+                getColonia().getZonaInstruccion().entraZonaInstruccion(this);
+                //Una vez dentro de la zona de instruccion, hacen entre 2 y 8 segundos de instruccion
+                getColonia().getZonaInstruccion().realizaInstruccion(this);
+                //Una vez que haya hecho la instrucción, saldrá de la zona de instrucción
+                getColonia().getZonaInstruccion().saleZonaInstruccion(this);
+                //Una vez fuera de la zona de instrucción, se irá a a zona de descanso
+                getColonia().getZonaDescanso().entraZonaDescanso(this);
+                //Una vez dentro de la zona de descanso, procede a descansar
+                getColonia().getZonaDescanso().realizaDescanso(this);
+                //Una vez que haya realizado el descanso, abandonará la zona de descanso
+                getColonia().getZonaDescanso().saleZonaDescanso(this);
+                //Como se ha completado una iteración, incrementamos en 1 el numero
+                setNumIteraciones(getNumIteraciones() + 1);
+                if (getNumIteraciones() == 6){
+                    //Cuando hayan hecho 6 iteraciones, se pasaran por la zona para comer, tardan en comer 3 segundos
+                    getColonia().getZonaComer().entraZonaComer(this);
+                    //Una vez dentro de la zona de comer, nos ponemos a comer
+                    getColonia().getZonaComer().come(this);
+                    //Cuando haya comido se va de la zona para comer y repite de nuevo
+                    getColonia().getZonaComer().saleZonaComer(this);
+                    //Como ya hemos comido, ahora las iteraciones se reiniciarán
+                    setNumIteraciones(0);
+                }
+            }
         }
         else if (this.getTipo() == "Cria"){
             //Verificamos que la hormiga es de tipo cría
@@ -97,6 +122,12 @@ public class Hormiga extends Thread{
     }
     public int getNumIdentificador(){
         return this.numIdentificador;
+    }
+    public int getNumIteraciones(){
+        return this.numIteraciones;
+    }
+    public void setNumIteraciones(int numIteraciones){
+        this.numIdentificador = numIteraciones;
     }
     public String getTipo(){
         return this.tipo;
