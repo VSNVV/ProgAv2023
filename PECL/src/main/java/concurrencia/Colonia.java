@@ -1,5 +1,6 @@
 package concurrencia;
 
+import javax.swing.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,10 +18,16 @@ public class Colonia { //Recurso compartido por todos los hilos
     //Métodos de la clase colonia
 
     //Método constructor
-    public Colonia(Log log){
+    public Colonia(Log log, JTextField jTextFieldHormigasBuscandoComida, JTextField jTextFieldHormigasContraInvasor,
+                   JTextField jTextFieldHormigasAlmacenComida, JTextField jTextFieldHormiasLlevandoComida,
+                   JTextField jTextFieldHormigasHaciendoInstruccion, JTextField jTextFieldUnidadesComidaAlmacen,
+                   JTextField jTextFieldUnidadesComidaZonaComer, JTextField jTextFieldHormigasDescansando,
+                   JTextField jTextFieldHormigasZonaComer, JTextField jTextFieldHormigasRefugio){
         this.log = log;
         //Crear aqui todas las zonas, para luego en distribuida pasar un solo objeto que tenga toda la parte concurrente
-        this.almacenComida = new AlmacenComida(log);
+        this.almacenComida = new AlmacenComida(log, jTextFieldUnidadesComidaAlmacen, jTextFieldHormigasAlmacenComida);
+        this.zonaComer = new ZonaComer(log, jTextFieldUnidadesComidaZonaComer, jTextFieldHormiasLlevandoComida, jTextFieldHormigasZonaComer);
+
     }
 
     //Método para entrar a la colonia

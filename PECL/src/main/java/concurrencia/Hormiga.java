@@ -69,8 +69,9 @@ public class Hormiga extends Thread{
                 }
             }
         }
-        else if (this.getTipo() == "Soldada"){
+        else if (this.getTipo() == "Soldado"){
             //Verificamos que la hormiga es de tipo soldada
+
         }
         else if (this.getTipo() == "Cria"){
             //Verificamos que la hormiga es de tipo cría

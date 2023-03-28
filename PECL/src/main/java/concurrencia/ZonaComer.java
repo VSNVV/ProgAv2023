@@ -1,5 +1,6 @@
 package concurrencia;
 
+import javax.swing.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -8,13 +9,18 @@ public class ZonaComer {
     private Log log;
     private Lock entradaSalida = new ReentrantLock(), elementoComida = new ReentrantLock();
     private int numElementosComida = 0;
+    private ListaThreads unidadesElementosComida, listaHormigasLlevandoComida, listaHormigasZonaComer;
 
 
     //Métodos de la clase ZonaComer
 
     //Método constructor
-    public ZonaComer(Log log){
+    public ZonaComer(Log log, JTextField jTextFieldUnidadesComidaZonaComer, JTextField jTextFieldHormiasLlevandoComida,
+                     JTextField jTextFieldHormigasZonaComer){
         this.log = log;
+        this.unidadesElementosComida = new ListaThreads(jTextFieldUnidadesComidaZonaComer);
+        this.listaHormigasLlevandoComida = new ListaThreads(jTextFieldHormiasLlevandoComida);
+        this.listaHormigasZonaComer = new ListaThreads(jTextFieldHormigasZonaComer);
     }
 
     //Método para entrar a la zona para comer

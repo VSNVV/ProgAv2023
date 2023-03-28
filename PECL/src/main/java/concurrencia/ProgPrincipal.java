@@ -5,11 +5,25 @@
  */
 package concurrencia;
 
+import javax.swing.*;
+
 /**
  *
  * @author vsnv
  */
 public class ProgPrincipal extends javax.swing.JFrame {
+    //Atributos de la clase ProgPrincipal
+    private Log log = new Log(true);
+    private Colonia colonia = new Colonia(getLog(), getjTextFieldHormigasBuscandoComida(), getjTextFieldHormigasContraInvasor(),
+            getjTextFieldHormigasAlmacenComida(), getjTextFieldHormiasLlevandoComida(), getjTextFieldHormigasHaciendoInstruccion(),
+            getjTextFieldUnidadesComidaAlmacen(), getjTextFieldUnidadesComidaZonaComer(), getjTextFieldHormigasDescansando(),
+            getjTextFieldHormigasZonaComer(), getjTextFieldHormigasRefugio());
+
+    //Creamos la colonia
+
+
+
+
 
     /**
      * Creates new form ProgPrincipal
@@ -49,9 +63,9 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jLabelUnidadesComidaZonaComer = new javax.swing.JLabel();
         jTextFieldUnidadesComidaZonaComer = new javax.swing.JTextField();
         jLabelZonaComer = new javax.swing.JLabel();
-        jTextFieldZonaComer = new javax.swing.JTextField();
+        jTextFieldHormigasZonaComer = new javax.swing.JTextField();
         jLabelRefugio = new javax.swing.JLabel();
-        jTextFieldRefugio = new javax.swing.JTextField();
+        jTextFieldHormigasRefugio = new javax.swing.JTextField();
         jButtonPausarReanudar = new javax.swing.JButton();
         jButtonGenerarAmenazaInsectoInvasor = new javax.swing.JButton();
 
@@ -65,27 +79,18 @@ public class ProgPrincipal extends javax.swing.JFrame {
         JPanelHormigasBuscandoComida.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelHormigasBuscandoComida.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelHormigasBuscandoComida.setForeground(new java.awt.Color(0, 0, 0));
         jLabelHormigasBuscandoComida.setText("Hormigas buscando comida");
         JPanelHormigasBuscandoComida.add(jLabelHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
-
-        jTextFieldHormigasBuscandoComida.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormigasBuscandoComida.setForeground(new java.awt.Color(0, 0, 0));
         JPanelHormigasBuscandoComida.add(jTextFieldHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 20, 1430, 60));
 
         jPanelPrincipal.add(JPanelHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1630, 90));
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
-        jPanel1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelHormigasContraInvasor.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelHormigasContraInvasor.setForeground(new java.awt.Color(0, 0, 0));
         jLabelHormigasContraInvasor.setText("Hormigas repeliendo un insecto invasor ");
         jPanel1.add(jLabelHormigasContraInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 10, -1, -1));
-
-        jTextFieldHormigasContraInvasor.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormigasContraInvasor.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.add(jTextFieldHormigasContraInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 1610, 120));
 
         jPanelPrincipal.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 1630, 170));
@@ -99,83 +104,48 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jPanel2.add(jLabelInteriorColonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 10, -1, -1));
 
         jLabelHormigasAlmacenComida.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelHormigasAlmacenComida.setForeground(new java.awt.Color(0, 0, 0));
         jLabelHormigasAlmacenComida.setText("Hormigas en el Almacen de Comida");
         jPanel2.add(jLabelHormigasAlmacenComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
-
-        jTextFieldHormigasAlmacenComida.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormigasAlmacenComida.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldHormigasAlmacenComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 1380, 30));
 
         jLabelHormigasLlevandoComida.setBackground(new java.awt.Color(0, 0, 0));
-        jLabelHormigasLlevandoComida.setForeground(new java.awt.Color(0, 0, 0));
         jLabelHormigasLlevandoComida.setText("Hormigas llevando comida a la Zona para Comer");
         jPanel2.add(jLabelHormigasLlevandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, -1));
-
-        jTextFieldHormiasLlevandoComida.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormiasLlevandoComida.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldHormiasLlevandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 1320, 30));
 
         jLabelHormigasHaciendoInstruccion.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelHormigasHaciendoInstruccion.setForeground(new java.awt.Color(0, 0, 0));
         jLabelHormigasHaciendoInstruccion.setText("Hormigas haciendo Instruccion");
         jPanel2.add(jLabelHormigasHaciendoInstruccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
-
-        jTextFieldHormigasHaciendoInstruccion.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormigasHaciendoInstruccion.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldHormigasHaciendoInstruccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 1420, 30));
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Hormigas descansando");
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, -1, -1));
-
-        jTextFieldHormigasDescansando.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldHormigasDescansando.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldHormigasDescansando, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 720, 30));
 
         jLabelUnidadesComidaAlmacen.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelUnidadesComidaAlmacen.setForeground(new java.awt.Color(0, 0, 0));
         jLabelUnidadesComidaAlmacen.setText("Unidades de Comida (Almacen)");
         jPanel2.add(jLabelUnidadesComidaAlmacen, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 160, -1, -1));
-
-        jTextFieldUnidadesComidaAlmacen.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldUnidadesComidaAlmacen.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldUnidadesComidaAlmacen, new org.netbeans.lib.awtextra.AbsoluteConstraints(1380, 150, 60, 30));
 
         jLabelUnidadesComidaZonaComer.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelUnidadesComidaZonaComer.setForeground(new java.awt.Color(0, 0, 0));
         jLabelUnidadesComidaZonaComer.setText("Unidades de Comida (Zona para Comer)");
         jPanel2.add(jLabelUnidadesComidaZonaComer, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 200, -1, -1));
-
-        jTextFieldUnidadesComidaZonaComer.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldUnidadesComidaZonaComer.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jTextFieldUnidadesComidaZonaComer, new org.netbeans.lib.awtextra.AbsoluteConstraints(1380, 190, 60, 30));
 
         jLabelZonaComer.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelZonaComer.setForeground(new java.awt.Color(0, 0, 0));
         jLabelZonaComer.setText("Zona para Comer");
         jPanel2.add(jLabelZonaComer, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
-
-        jTextFieldZonaComer.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldZonaComer.setForeground(new java.awt.Color(0, 0, 0));
-        jPanel2.add(jTextFieldZonaComer, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 1010, 90));
+        jPanel2.add(jTextFieldHormigasZonaComer, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 1010, 90));
 
         jLabelRefugio.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelRefugio.setForeground(new java.awt.Color(0, 0, 0));
         jLabelRefugio.setText("Refugio");
         jPanel2.add(jLabelRefugio, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 350, -1, -1));
+        jPanel2.add(jTextFieldHormigasRefugio, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 1010, 110));
 
-        jTextFieldRefugio.setBackground(new java.awt.Color(255, 255, 255));
-        jTextFieldRefugio.setForeground(new java.awt.Color(0, 0, 0));
-        jPanel2.add(jTextFieldRefugio, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 1010, 110));
-
-        jButtonPausarReanudar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonPausarReanudar.setForeground(new java.awt.Color(255, 255, 255));
         jButtonPausarReanudar.setText("Pausar");
         jPanel2.add(jButtonPausarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 440, 150, 40));
 
-        jButtonGenerarAmenazaInsectoInvasor.setForeground(new java.awt.Color(255, 255, 255));
         jButtonGenerarAmenazaInsectoInvasor.setText("Generar amenaza de insecto invasor");
         jPanel2.add(jButtonGenerarAmenazaInsectoInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 440, 340, 40));
 
@@ -245,9 +215,54 @@ public class ProgPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldHormigasContraInvasor;
     private javax.swing.JTextField jTextFieldHormigasDescansando;
     private javax.swing.JTextField jTextFieldHormigasHaciendoInstruccion;
-    private javax.swing.JTextField jTextFieldRefugio;
+    private javax.swing.JTextField jTextFieldHormigasRefugio;
+    private javax.swing.JTextField jTextFieldHormigasZonaComer;
     private javax.swing.JTextField jTextFieldUnidadesComidaAlmacen;
     private javax.swing.JTextField jTextFieldUnidadesComidaZonaComer;
-    private javax.swing.JTextField jTextFieldZonaComer;
     // End of variables declaration//GEN-END:variables
+
+    //Métodos get y set
+
+    public JTextField getjTextFieldHormiasLlevandoComida() {
+        return jTextFieldHormiasLlevandoComida;
+    }
+
+    public JTextField getjTextFieldHormigasAlmacenComida() {
+        return jTextFieldHormigasAlmacenComida;
+    }
+
+    public JTextField getjTextFieldHormigasBuscandoComida() {
+        return jTextFieldHormigasBuscandoComida;
+    }
+
+    public JTextField getjTextFieldHormigasContraInvasor() {
+        return jTextFieldHormigasContraInvasor;
+    }
+
+    public JTextField getjTextFieldHormigasDescansando() {
+        return jTextFieldHormigasDescansando;
+    }
+
+    public JTextField getjTextFieldHormigasHaciendoInstruccion() {
+        return jTextFieldHormigasHaciendoInstruccion;
+    }
+
+    public JTextField getjTextFieldHormigasRefugio() {
+        return jTextFieldHormigasRefugio;
+    }
+
+    public JTextField getjTextFieldUnidadesComidaAlmacen() {
+        return jTextFieldUnidadesComidaAlmacen;
+    }
+
+    public JTextField getjTextFieldUnidadesComidaZonaComer() {
+        return jTextFieldUnidadesComidaZonaComer;
+    }
+    public Log getLog(){
+        return this.log;
+    }
+
+    public JTextField getjTextFieldHormigasZonaComer() {
+        return jTextFieldHormigasZonaComer;
+    }
 }

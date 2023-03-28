@@ -1,5 +1,6 @@
 package concurrencia;
 
+import javax.swing.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,13 +13,16 @@ public class AlmacenComida {
     private Lock entradaSalida = new ReentrantLock(), unidadComida = new ReentrantLock();
     private Condition colaEspera = entradaSalida.newCondition(), esperaElementoComida = unidadComida.newCondition();
     private boolean hormigaEsperandoElementoComida;
+    private ListaThreads unidadesElementosComida, hormigasAlmacenComida;
 
     //Métodos de la clase AlmacenComida
 
     //Método constructor
-    public AlmacenComida(Log log){
-
+    public AlmacenComida(Log log, JTextField jTextFieldUnidadesComidaAlmacen, JTextField jTextFieldHormigasAlmacenComida){
+        this.unidadesElementosComida = new ListaThreads(jTextFieldUnidadesComidaAlmacen);
+        this.hormigasAlmacenComida = new ListaThreads(jTextFieldHormigasAlmacenComida);
     }
+
     //Método para entrar al almacen de comida
     public void entraAlmacen(Hormiga hormiga){
         entradaSalida.lock();
