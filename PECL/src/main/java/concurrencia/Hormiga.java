@@ -112,6 +112,19 @@ public class Hormiga extends Thread{
         }
         else if (this.getTipo() == "Cria"){
             //Verificamos que la hormiga es de tipo cría
+            //UNa vez dentro de la colonia, van a la zona de comer
+            getColonia().getZonaComer().entraZonaComer(this);
+            //Una vez dentro de la zona de comer, se ponen a comer
+            getColonia().getZonaComer().come(this);
+            //Una vez que haya comido, sale de la zona de comer
+            getColonia().getZonaComer().saleZonaComer(this);
+            //Una vez que haya salido de la zona para comer, entran a la zona de descanso
+            getColonia().getZonaDescanso().entraZonaDescanso(this);
+            //Una vez dentro de la zona de descanso, descansan 4 segundos
+            getColonia().getZonaDescanso().realizaDescanso(this);
+            //Una vez haya realizado el descanso, sale de la zona de descanso
+            getColonia().getZonaDescanso().saleZonaDescanso(this);
+
         }
     }
 
