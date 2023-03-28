@@ -24,6 +24,11 @@ public class ListaThreads{
         imprimirHormiga();
     }
 
+    public synchronized void insertarNumero(Integer num){
+        String texto = String.valueOf(num);
+        tf.setText(texto);
+    }
+
     private void imprimirHormiga() {
         String contenido = "";
         for(int i=0; i<listaHormigas.size(); i++)
@@ -31,5 +36,9 @@ public class ListaThreads{
             contenido = contenido + listaHormigas.get(i).getIdentificador()+" ";
         }
         tf.setText(contenido);
+    }
+
+    private void imprimirNumero(){
+
     }
 }
