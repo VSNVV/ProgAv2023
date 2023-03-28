@@ -45,6 +45,8 @@ public class ProgPrincipal extends javax.swing.JFrame {
             hormigaSoldado.setName(identificadorSoldado);
             hormigaSoldado.start();
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
+            getColonia().setNumHormigasSoldado(getNumHormigasSoldado());
+
             //Creamos una hormiga cria
             fmt.format("%05d", getNumHormigasCria());
             String identificadorCria = "HC" + fmt;
