@@ -11,11 +11,23 @@ public class Hormiga extends Thread{
     //Métodos de la clase Hormiga
 
     //Método constructor
-    public Hormiga(Colonia colonia, Log log,  String identificador, int numIdentificador, String tipo){
+    public Hormiga(Colonia colonia, Log log,  String identificador, int numIdentificador){
         this.colonia = colonia;
         this.identificador = identificador;
         this.numIdentificador = numIdentificador;
-        this.tipo = tipo;
+        //El tipo dependerá del ID
+        if (identificador.indexOf("O") == 1){
+            //La segunda letra es una O de obrera, por tanto esta hormiga será obrera
+            this.tipo = "Obrera";
+        }
+        else if (identificador.indexOf("S") == 1){
+            //La segunda letra es una S de soldado, por tanto esta hormiga será soldado
+            this.tipo = "Soldada";
+        }
+        else{
+            //Si no es ni obrera ni soldada, tiene que ser cria
+            this.tipo = "Cria";
+        }
     }
 
     //Método run

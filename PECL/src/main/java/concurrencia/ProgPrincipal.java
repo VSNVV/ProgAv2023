@@ -6,6 +6,7 @@
 package concurrencia;
 
 import javax.swing.*;
+import java.util.Formatter;
 
 /**
  *
@@ -13,23 +14,49 @@ import javax.swing.*;
  */
 public class ProgPrincipal extends javax.swing.JFrame {
     //Atributos de la clase ProgPrincipal
+    private int numTotalHormigas = 0, numHormigasObreras = 0, numHormigasSoldado = 0, numHormigasCria = 0;
     private Log log = new Log(true);
     private Colonia colonia = new Colonia(getLog(), getjTextFieldHormigasBuscandoComida(), getjTextFieldHormigasContraInvasor(),
             getjTextFieldHormigasAlmacenComida(), getjTextFieldHormiasLlevandoComida(), getjTextFieldHormigasHaciendoInstruccion(),
             getjTextFieldUnidadesComidaAlmacen(), getjTextFieldUnidadesComidaZonaComer(), getjTextFieldHormigasDescansando(),
             getjTextFieldHormigasZonaComer(), getjTextFieldHormigasRefugio());
 
-    //Creamos la colonia
-
-
-
-
-
     /**
      * Creates new form ProgPrincipal
      */
     public ProgPrincipal() {
         initComponents();
+        //Creamos los hilos
+        Formatter fmt = new Formatter();
+        while(getNumTotalHormigas() < 10000){
+            for (int i = 0; i < 3; i++){
+                fmt.format("%05d", getNumHormigasObreras());
+                String identificadorObrera = "HO" + fmt;
+                Hormiga hormigaObrera = new Hormiga(getColonia(), getLog(), identificadorObrera, getNumHormigasObreras());
+                hormigaObrera.setName(identificadorObrera);
+                hormigaObrera.start();
+                setNumHormigasObreras(getNumHormigasObreras() + 1);
+            }
+            //Por cada 3 obreras, se hace una soldada y una cria
+            //Creamos una hormiga soldado
+            fmt.format("%05d", getNumHormigasSoldado());
+            String identificadorSoldado = "HS" + fmt;
+            Hormiga hormigaSoldado = new Hormiga(getColonia(), getLog(), identificadorSoldado, getNumHormigasSoldado());
+            hormigaSoldado.setName(identificadorSoldado);
+            hormigaSoldado.start();
+            setNumHormigasSoldado(getNumHormigasSoldado() + 1);
+            //Creamos una hormiga cria
+            fmt.format("%05d", getNumHormigasCria());
+            String identificadorCria = "HC" + fmt;
+            Hormiga hormigaCria = new Hormiga(getColonia(), getLog(), identificadorCria, getNumHormigasCria());
+            hormigaCria.setName(identificadorCria);
+            hormigaCria.start();
+            setNumHormigasCria(getNumHormigasCria() + 1);
+            //Esperamos entre 0.8 y 3.5 segundos para hacer la siguiente ronda
+            try{
+                Thread.sleep((int) (Math.random() * 800 + 3500));
+            }catch(InterruptedException ie){}
+        }
     }
 
     /**
@@ -258,11 +285,48 @@ public class ProgPrincipal extends javax.swing.JFrame {
     public JTextField getjTextFieldUnidadesComidaZonaComer() {
         return jTextFieldUnidadesComidaZonaComer;
     }
+
+    public JTextField getjTextFieldHormigasZonaComer() {
+        return jTextFieldHormigasZonaComer;
+    }
+
     public Log getLog(){
         return this.log;
     }
 
-    public JTextField getjTextFieldHormigasZonaComer() {
-        return jTextFieldHormigasZonaComer;
+    public Colonia getColonia(){
+        return this.colonia;
+    }
+
+    public int getNumTotalHormigas(){
+        return this.numTotalHormigas;
+    }
+
+    public void setNumTotalHormigas(int numTotalHormigas){
+        this.numTotalHormigas = numTotalHormigas;
+    }
+
+    public int getNumHormigasObreras(){
+        return this.numHormigasObreras;
+    }
+
+    public void setNumHormigasObreras(int numHormigasObreras){
+        this.numHormigasObreras = numHormigasObreras;
+    }
+
+    public int getNumHormigasSoldado(){
+        return this.numHormigasSoldado;
+    }
+
+    public void setNumHormigasSoldado(int numHormigasSoldado){
+        this.numHormigasSoldado = numHormigasSoldado;
+    }
+
+    public int getNumHormigasCria(){
+        return this.numHormigasCria;
+    }
+
+    public void setNumHormigasCria(int numHormigasCria){
+        this.numHormigasCria = numHormigasCria;
     }
 }
