@@ -7,11 +7,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
+    private int numHormigasSoldado = 0, numHormigasEnInvasion = 0;
     private boolean invasionInsecto = false;
     private Log log; //Log del sistema concurrente
     private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
     private Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
     private Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
+    private Lock cerrojoInvasion = new ReentrantLock(); //Lock de la invasion del insecto
+    private Condition hormigasEsperandoInvasion = cerrojoInvasion.newCondition();
     private AlmacenComida almacenComida; //Almacen de comida de la colonia
     private ZonaComer zonaComer; //Zona para comer de la colonia
     private ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
@@ -66,6 +69,31 @@ public class Colonia { //Recurso compartido por todos los hilos
         }
     }
 
+    //Método para comprobar su hay una invasion
+    public void invasion(Hormiga hormiga){
+        cerrojoInvasion.lock();
+        try{
+            //Una hormiga se suma a la invasión, por tanto incrementamos el numero de hormigas en la invasion
+            setNumHormigasEnInvasion(getNumHormigasEnInvasion() + 1);
+            //En primer lugar, tenemos que ver si es la ultima hormiga que queda
+            if((getNumHormigasEnInvasion()) != (getNumHormigasSoldado())){
+                //Verificamos no es la úlitma, por tanto se dormirá
+                hormigasEsperandoInvasion.await();
+            }
+            else{
+                //Se verifica que es la última, por tanto salen a la invasion
+                //poner booleano para que otras hormigas no se puedan meter durante una invasión
+                getLog().escribirEnLog("[Invasion] --> Las hormigas estan repeliendo al insecto invasor");
+                //La invasion dura 20 segundos
+                Thread.sleep(2000);
+                //Una vez finalizada la invasión, despertamos a todos los hilos
+            }
+        }catch (InterruptedException ingnored){}
+        finally{
+            cerrojoInvasion.unlock();
+        }
+    }
+
     //Métodos get y set
     public Log getLog(){
         return this.log;
@@ -89,5 +117,21 @@ public class Colonia { //Recurso compartido por todos los hilos
 
     public void setInvasionInsecto(boolean invasionInsecto){
         this.invasionInsecto = invasionInsecto;
+    }
+
+    public int getNumHormigasSoldado() {
+        return numHormigasSoldado;
+    }
+
+    public void setNumHormigasSoldado(int numHormigasSoldado) {
+        this.numHormigasSoldado = numHormigasSoldado;
+    }
+
+    public int getNumHormigasEnInvasion() {
+        return numHormigasEnInvasion;
+    }
+
+    public void setNumHormigasEnInvasion(int numHormigasEnInvasion) {
+        this.numHormigasEnInvasion = numHormigasEnInvasion;
     }
 }
