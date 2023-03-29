@@ -14,6 +14,7 @@ public class ZonaInstruccion {
 
     //Método constructor
     public ZonaInstruccion(Log log, JTextField jTextFieldHormigasHaciendoInstruccion){
+        this.log = log;
         this.listaHormigasHaciendoInstruccion = new ListaThreads(jTextFieldHormigasHaciendoInstruccion);
     }
 
