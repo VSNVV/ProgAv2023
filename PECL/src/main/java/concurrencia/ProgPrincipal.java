@@ -187,9 +187,19 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jPanel2.add(jTextFieldHormigasRefugio, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 1010, 110));
 
         jButtonPausarReanudar.setText("Pausar");
+        jButtonPausarReanudar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPausarReanudarActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButtonPausarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 440, 150, 40));
 
         jButtonGenerarAmenazaInsectoInvasor.setText("Generar amenaza de insecto invasor");
+        jButtonGenerarAmenazaInsectoInvasor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGenerarAmenazaInsectoInvasorActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButtonGenerarAmenazaInsectoInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 440, 340, 40));
 
         jPanelPrincipal.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 1630, 500));
@@ -198,6 +208,21 @@ public class ProgPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonGenerarAmenazaInsectoInvasorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
+        // TODO add your handling code here:
+        //Activaremos el booleano de invasion
+        getColonia().setInvasionInsecto(true);
+        //Una vez activada darmeos interrupt a todas las hormiga soldado que esten presentes en la colonia
+        for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
+            getColonia().getListaHormigas().get(i).interrupt();
+        }
+
+    }//GEN-LAST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
+
+    private void jButtonPausarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPausarReanudarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonPausarReanudarActionPerformed
 
     /**
      * @param args the command line arguments
