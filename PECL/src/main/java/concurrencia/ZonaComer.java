@@ -53,7 +53,7 @@ public class ZonaComer {
         elementoComida.lock();
         try{
             //En depositar un elemento de comida se tarda entre 1 y 2 segundos
-            Thread.sleep((int) (Math.random() * 1000 + 1000));
+            Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
             //Una vez transcurrido el timepo, incrementamos el numero de elementos de comida
             setNumElementosComida(getNumElementosComida() + 1);
             //Imprimimos el numero en el JTextField
@@ -83,7 +83,7 @@ public class ZonaComer {
         }
         else if(hormiga.getTipo() == "Cria"){
             //Una hormiga cria tarda en comer entre 3 y 5 segundos
-            Thread.sleep((int) (((Math.random() + 1) * 3000 ) + 2000));
+            Thread.sleep((int) (((Math.random() + 1) * 3000) + (5000 - (3000 * 2))));
         }
     }
 

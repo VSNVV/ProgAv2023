@@ -52,7 +52,7 @@ public class ZonaDescanso {
         getLog().escribirEnLog("[Zona Descanso] --> La hormiga " + hormiga.getIdentificador() + " esta descansando");
         if (hormiga.getTipo() == "Soldada"){
             //Una hormiga soldada descansa un tiempo aleatorio entre 2 y 8 segundos
-            Thread.sleep((int) ((Math.random() + 1) * 2000 + 5000));
+            Thread.sleep((int) (((Math.random() + 1) * 2000) + (8000 - (2000 * 2))));
         }
         else if (hormiga.getTipo() == "Obrera"){
             //Una hormiga obrera realiza un descanso de 1 segundo

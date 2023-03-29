@@ -60,7 +60,7 @@ public class AlmacenComida {
         unidadComida.lock();
         try{
             //Para depositar, se tarda un tiempo aleatorio entre 2 y 4 segundos
-            Thread.sleep((int) (Math.random() * 2000 + 2000));
+            Thread.sleep((int) (((Math.random() + 1) * 2000) + (4000 - (2000 * 2))));
             //Una vez transcurrido el tiempo, añadimos el elemento de comida
             setNumElementosComida(getNumElementosComida() + 1);
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida");
@@ -90,7 +90,7 @@ public class AlmacenComida {
                 }catch(InterruptedException ie){}
             }
             //Se verifica que hay un elemento de comida que recoger, tarda entre 1 y 2 segundos
-            Thread.sleep((int) (Math.random() * 2000 + 2000));
+            Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
             //Una vez transcurrido el tiempo, cogemos el elemento de comida
             setNumElementosComida(getNumElementosComida() - 1);
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida");
