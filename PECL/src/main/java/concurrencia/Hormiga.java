@@ -65,13 +65,7 @@ public class Hormiga extends Thread{
                 while (true){
                     //Verificamos que la hormiga obrera tiene un identificador impar
                     //La hormiga sale al exterior en busca de un elemento de comida
-                    getColonia().saleColonia(this);
-                    //Tarda 4 segundos en coger el elemento de comida
-                    try {
-                        Thread.sleep(4000);
-                    } catch (InterruptedException e) {}
-                    //Una vez que hayan pasado los 4 segundos entrará a la colonia
-                    getColonia().entraColonia(this);
+                    getColonia().buscaComida(this);
                     //Una vez esté dentro de la colonia deposita el elemento de comida en el almacen de comida
                     getColonia().getAlmacenComida().entraAlmacen(this);
                     getColonia().getAlmacenComida().depositaElementoComida(this);
