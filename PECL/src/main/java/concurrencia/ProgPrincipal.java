@@ -56,7 +56,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             setNumHormigasCria(getNumHormigasCria() + 1);
             //Esperamos entre 0.8 y 3.5 segundos para hacer la siguiente ronda
             try{
-                Thread.sleep((int) (Math.random() * 800 + 3500));
+                Thread.sleep((int) (((Math.random() + 1) * 800) + (3500 - (800 * 2))));
             }catch(InterruptedException ie){}
         }
     }
