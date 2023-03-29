@@ -21,6 +21,7 @@ public class AlmacenComida {
     public AlmacenComida(Log log, JTextField jTextFieldUnidadesComidaAlmacen, JTextField jTextFieldHormigasAlmacenComida){
         this.unidadesElementosComida = new ListaThreads(jTextFieldUnidadesComidaAlmacen);
         this.hormigasAlmacenComida = new ListaThreads(jTextFieldHormigasAlmacenComida);
+        this.log = log;
     }
 
     //Método para entrar al almacen de comida
