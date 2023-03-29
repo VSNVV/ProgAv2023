@@ -13,14 +13,14 @@ public class AlmacenComida {
     private Lock entradaSalida = new ReentrantLock(), unidadComida = new ReentrantLock();
     private Condition colaEspera = entradaSalida.newCondition(), esperaElementoComida = unidadComida.newCondition();
     private boolean hormigaEsperandoElementoComida;
-    private ListaThreads unidadesElementosComida, hormigasAlmacenComida;
+    private ListaThreads unidadesElementosComida, listaHormigasAlmacenComida;
 
     //Métodos de la clase AlmacenComida
 
     //Método constructor
     public AlmacenComida(Log log, JTextField jTextFieldUnidadesComidaAlmacen, JTextField jTextFieldHormigasAlmacenComida){
         this.unidadesElementosComida = new ListaThreads(jTextFieldUnidadesComidaAlmacen);
-        this.hormigasAlmacenComida = new ListaThreads(jTextFieldHormigasAlmacenComida);
+        this.listaHormigasAlmacenComida = new ListaThreads(jTextFieldHormigasAlmacenComida);
         this.log = log;
     }
 
@@ -36,6 +36,9 @@ public class AlmacenComida {
                     //Una vez que se le despierta al hilo, podrá entrar
                 }catch(InterruptedException ie){}
             }
+            //Añadimos a la hormiga al JTextField de hormigas en almacen
+            getListaHormigasAlmacenComida().meterHormiga(hormiga);
+            //Incrementamos en 1 el numero de hormigas en el almacen
             setNumHormigasDentro(getNumHormigasDentro() + 1);
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha entrado al almacen de comida.");
         }finally{
@@ -47,7 +50,11 @@ public class AlmacenComida {
     public void saleAlmacen(Hormiga hormiga){
         entradaSalida.lock();
         try{
-            //Para salir del almacen, decrementamos en 1 el numero de hormigas que hay dentro del almacén
+            //Antes de salir, debemos dar un signal a la siguiente hormiga que quiera entrar al almacen
+            colaEspera.signal();
+            //Para salir del almacen, eliminamos a la hormiga del JTextField del almacen de comida
+            getListaHormigasAlmacenComida().sacarHormiga(hormiga);
+            //Decrementamos en 1 el numero de hormigas que hay dentro del almacén
             setNumHormigasDentro(getNumHormigasDentro() - 1);
             //Una vez que hayamos decrementado el valor, podremos salir del almacen
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha salido del almacen de comida");
@@ -64,14 +71,12 @@ public class AlmacenComida {
             Thread.sleep((int) (((Math.random() + 1) * 2000) + (4000 - (2000 * 2))));
             //Una vez transcurrido el tiempo, añadimos el elemento de comida
             setNumElementosComida(getNumElementosComida() + 1);
+            //Una vez que se ha añadido, actualizamos el valor en el JTextField
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida");
             //Una vez que han dejado un elemento de comida, despertarán a una hormiga en caso de que esté esperando un elemento de comida
-            if (isHormigaEsperandoElementoComida()){
-                //Se verifica que hay una hormiga esperando, por tanto se le despierta
-                esperaElementoComida.signal();
-                //Una vez que se ha despertado, pondremos el booleano a false
-                setHormigaEsperandoElementoComida(false);
-            }
+            esperaElementoComida.signal();
+
         } catch (InterruptedException e) {}
         finally{
             unidadComida.unlock();
@@ -94,6 +99,8 @@ public class AlmacenComida {
             Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
             //Una vez transcurrido el tiempo, cogemos el elemento de comida
             setNumElementosComida(getNumElementosComida() - 1);
+            //Una ve recogido, actualizamos el valor del JTextField
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida");
 
         } catch (InterruptedException e) {}
@@ -103,6 +110,16 @@ public class AlmacenComida {
     }
 
     //Métodos get y set
+    public Log getLog(){
+        return this.log;
+    }
+    public ListaThreads getUnidadesElementosComida() {
+        return unidadesElementosComida;
+    }
+    public ListaThreads getListaHormigasAlmacenComida() {
+        return listaHormigasAlmacenComida;
+    }
+
     public int getNumHormigasDentro(){
         return this.numHormigasDentro;
     }
@@ -114,9 +131,6 @@ public class AlmacenComida {
     }
     public void setNumElementosComida(int numElementosComida){
         this.numElementosComida = numElementosComida;
-    }
-    public Log getLog(){
-        return this.log;
     }
     public boolean isHormigaEsperandoElementoComida(){
         return this.hormigaEsperandoElementoComida;
