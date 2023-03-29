@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
     private int numHormigasSoldado = 0, numHormigasEnInvasion = 0;
-    private boolean invasionInsecto = false;
+    private boolean invasionInsecto = false, invasionEnCurso = false;
     private Log log; //Log del sistema concurrente
     private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
     private Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
@@ -82,13 +82,18 @@ public class Colonia { //Recurso compartido por todos los hilos
             }
             else{
                 //Se verifica que es la última, por tanto salen a la invasion
+                setInvasionEnCurso(true);
                 //poner booleano para que otras hormigas no se puedan meter durante una invasión
                 getLog().escribirEnLog("[Invasion] --> Las hormigas estan repeliendo al insecto invasor");
                 //La invasion dura 20 segundos
-                Thread.sleep(2000);
-                //Una vez finalizada la invasión, despertamos a todos los hilos
+                Thread.sleep(20000);
+                //Una vez finalizada la invasión, despertamos a todos los hilos y escribimos el evento en el log
+                getLog().escribirEnLog("[Invasion] --> La invasion ha terminado, el insecto invasor ha huido");
+                hormigasEsperandoInvasion.signalAll();
             }
-        }catch (InterruptedException ingnored){}
+            //Una vez finalizada la invasion, las hormigas se irán de la invasión
+            setNumHormigasEnInvasion(getNumHormigasEnInvasion() - 1);
+        }catch (InterruptedException ignored){}
         finally{
             cerrojoInvasion.unlock();
         }
@@ -117,6 +122,14 @@ public class Colonia { //Recurso compartido por todos los hilos
 
     public void setInvasionInsecto(boolean invasionInsecto){
         this.invasionInsecto = invasionInsecto;
+    }
+
+    public boolean isInvasionEnCurso() {
+        return invasionEnCurso;
+    }
+
+    public void setInvasionEnCurso(boolean invasionEnCurso) {
+        this.invasionEnCurso = invasionEnCurso;
     }
 
     public int getNumHormigasSoldado() {
