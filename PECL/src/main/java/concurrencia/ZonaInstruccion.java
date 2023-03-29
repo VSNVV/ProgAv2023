@@ -19,7 +19,7 @@ public class ZonaInstruccion {
     }
 
     //Método para entrar a la zona de instruccion
-    public void entraZonaInstruccion(Hormiga hormiga){
+    public void entraZonaInstruccion(Hormiga hormiga) throws InterruptedException{
         entradaSalida.lock();
         try{
             //Cuando entra una hormiga, mete su ID al JTextField correspondiente mediante el ListaThreads
@@ -32,7 +32,7 @@ public class ZonaInstruccion {
         }
     }
     //Método para salir de la zona de instruccion
-    public void saleZonaInstruccion(Hormiga hormiga){
+    public void saleZonaInstruccion(Hormiga hormiga) throws InterruptedException{
         entradaSalida.lock();
         try{
             //Para salir, en primer lugar tenemos que quitar su ID del JTextField

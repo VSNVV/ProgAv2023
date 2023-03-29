@@ -19,7 +19,7 @@ public class ZonaDescanso {
     }
 
     //Método para entrar a la zona de descanso
-    public void entraZonaDescanso(Hormiga hormiga){
+    public void entraZonaDescanso(Hormiga hormiga) throws InterruptedException{
         entradaSalida.lock();
         try{
             //Para entrar, metemos el identificador de la hormiga en el JTextField correspondiente
@@ -33,7 +33,7 @@ public class ZonaDescanso {
     }
 
     //Método para salir de la zona de descanso
-    public void saleZonaDescanso(Hormiga hormiga){
+    public void saleZonaDescanso(Hormiga hormiga) throws InterruptedException{
         entradaSalida.lock();
         try{
             //Para salir, tenemos que quitar el identificador de la hormiga del JTextField correspondiente

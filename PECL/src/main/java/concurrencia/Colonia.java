@@ -115,6 +115,8 @@ public class Colonia { //Recurso compartido por todos los hilos
                 //Se verica que hay una invasion activa y que la invasion no esta en curso, por tanto se puede unir
                 //Una hormiga se suma a la invasión, por tanto incrementamos el numero de hormigas en la invasion
                 setNumHormigasEnInvasion(getNumHormigasEnInvasion() + 1);
+                //Una vez añadida a la invasion, la metemos en el JTextField
+                getListaHormigasInvasor().meterHormiga(hormiga);
                 //En primer lugar, tenemos que ver si es la ultima hormiga que queda
                 if((getNumHormigasEnInvasion()) != (getNumHormigasSoldado())){
                     //Verificamos no es la úlitma, por tanto se dormirá
@@ -133,6 +135,8 @@ public class Colonia { //Recurso compartido por todos los hilos
                 }
                 //Una vez finalizada la invasion, las hormigas se irán de la invasión
                 setNumHormigasEnInvasion(getNumHormigasEnInvasion() - 1);
+                //Una vez que se han ido, se saldrán del JTextField de invasion
+                getListaHormigasInvasor().sacarHormiga(hormiga);
             }
         }
         catch(InterruptedException ignored){}
