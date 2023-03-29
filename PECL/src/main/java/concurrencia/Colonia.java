@@ -89,6 +89,8 @@ public class Colonia { //Recurso compartido por todos los hilos
         catch(InterruptedException ignored){}
         //Una vez que ya hemos buscado comida volvemos a la colonia
         entraColonia(hormiga);
+        //Una vez entra a la colonia, dejará de estar buscando comida
+        getListaHormigasBuscandoComida().sacarHormiga(hormiga);
     }
 
     //Método para comprobar su hay una invasion
