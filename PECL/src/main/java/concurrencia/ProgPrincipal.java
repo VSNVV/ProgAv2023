@@ -15,49 +15,63 @@ import java.util.Formatter;
 public class ProgPrincipal extends javax.swing.JFrame {
     //Atributos de la clase ProgPrincipal
     private int numTotalHormigas = 0, numHormigasObreras = 0, numHormigasSoldado = 0, numHormigasCria = 0;
-    private Log log = new Log(true);
-    private Colonia colonia = new Colonia(getLog(), getjTextFieldHormigasBuscandoComida(), getjTextFieldHormigasContraInvasor(),
-            getjTextFieldHormigasAlmacenComida(), getjTextFieldHormiasLlevandoComida(), getjTextFieldHormigasHaciendoInstruccion(),
-            getjTextFieldUnidadesComidaAlmacen(), getjTextFieldUnidadesComidaZonaComer(), getjTextFieldHormigasDescansando(),
-            getjTextFieldHormigasZonaComer(), getjTextFieldHormigasRefugio());
+    private Log log;
+    private Colonia colonia;
 
     /**
      * Creates new form ProgPrincipal
      */
     public ProgPrincipal() {
         initComponents();
+        //Creamos el log
+        this.log = new Log(true);
+        //Creamos la colonia
+        this.colonia = new Colonia(getLog(), getjTextFieldHormigasBuscandoComida(), getjTextFieldHormigasContraInvasor(),
+                getjTextFieldHormigasAlmacenComida(), getjTextFieldHormiasLlevandoComida(), getjTextFieldHormigasHaciendoInstruccion(),
+                getjTextFieldUnidadesComidaAlmacen(), getjTextFieldUnidadesComidaZonaComer(), getjTextFieldHormigasDescansando(),
+                getjTextFieldHormigasZonaComer(), getjTextFieldHormigasRefugio());
+    }
+
+    public void crearSistema(){
         //Creamos los hilos
-        Formatter fmt = new Formatter();
+        Formatter fmt;
         while(getNumTotalHormigas() < 10000){
             for (int i = 0; i < 3; i++){
+                fmt = new Formatter();
                 fmt.format("%05d", getNumHormigasObreras());
                 String identificadorObrera = "HO" + fmt;
                 Hormiga hormigaObrera = new Hormiga(getColonia(), getLog(), identificadorObrera, getNumHormigasObreras());
                 hormigaObrera.setName(identificadorObrera);
                 hormigaObrera.start();
+                identificadorObrera = null;
                 setNumHormigasObreras(getNumHormigasObreras() + 1);
             }
             //Por cada 3 obreras, se hace una soldada y una cria
             //Creamos una hormiga soldado
+            fmt = new Formatter();
             fmt.format("%05d", getNumHormigasSoldado());
             String identificadorSoldado = "HS" + fmt;
             Hormiga hormigaSoldado = new Hormiga(getColonia(), getLog(), identificadorSoldado, getNumHormigasSoldado());
             hormigaSoldado.setName(identificadorSoldado);
             hormigaSoldado.start();
+            identificadorSoldado = "";
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
             getColonia().setNumHormigasSoldado(getNumHormigasSoldado());
 
             //Creamos una hormiga cria
+            fmt = new Formatter();
             fmt.format("%05d", getNumHormigasCria());
             String identificadorCria = "HC" + fmt;
             Hormiga hormigaCria = new Hormiga(getColonia(), getLog(), identificadorCria, getNumHormigasCria());
             hormigaCria.setName(identificadorCria);
             hormigaCria.start();
+            identificadorCria = null;
             setNumHormigasCria(getNumHormigasCria() + 1);
             //Esperamos entre 0.8 y 3.5 segundos para hacer la siguiente ronda
             try{
                 Thread.sleep((int) (((Math.random() + 1) * 800) + (3500 - (800 * 2))));
             }catch(InterruptedException ie){}
+            setNumTotalHormigas(getNumTotalHormigas() + 5);
         }
     }
 
@@ -211,13 +225,14 @@ public class ProgPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ProgPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        ProgPrincipal main = new ProgPrincipal();
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProgPrincipal().setVisible(true);
+                main.setVisible(true);
             }
         });
+        main.crearSistema();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -253,43 +268,43 @@ public class ProgPrincipal extends javax.swing.JFrame {
     //Métodos get y set
 
     public JTextField getjTextFieldHormiasLlevandoComida() {
-        return jTextFieldHormiasLlevandoComida;
+        return this.jTextFieldHormiasLlevandoComida;
     }
 
     public JTextField getjTextFieldHormigasAlmacenComida() {
-        return jTextFieldHormigasAlmacenComida;
+        return this.jTextFieldHormigasAlmacenComida;
     }
 
     public JTextField getjTextFieldHormigasBuscandoComida() {
-        return jTextFieldHormigasBuscandoComida;
+        return this.jTextFieldHormigasBuscandoComida;
     }
 
     public JTextField getjTextFieldHormigasContraInvasor() {
-        return jTextFieldHormigasContraInvasor;
+        return this.jTextFieldHormigasContraInvasor;
     }
 
     public JTextField getjTextFieldHormigasDescansando() {
-        return jTextFieldHormigasDescansando;
+        return this.jTextFieldHormigasDescansando;
     }
 
     public JTextField getjTextFieldHormigasHaciendoInstruccion() {
-        return jTextFieldHormigasHaciendoInstruccion;
+        return this.jTextFieldHormigasHaciendoInstruccion;
     }
 
     public JTextField getjTextFieldHormigasRefugio() {
-        return jTextFieldHormigasRefugio;
+        return this.jTextFieldHormigasRefugio;
     }
 
     public JTextField getjTextFieldUnidadesComidaAlmacen() {
-        return jTextFieldUnidadesComidaAlmacen;
+        return this.jTextFieldUnidadesComidaAlmacen;
     }
 
     public JTextField getjTextFieldUnidadesComidaZonaComer() {
-        return jTextFieldUnidadesComidaZonaComer;
+        return this.jTextFieldUnidadesComidaZonaComer;
     }
 
     public JTextField getjTextFieldHormigasZonaComer() {
-        return jTextFieldHormigasZonaComer;
+        return this.jTextFieldHormigasZonaComer;
     }
 
     public Log getLog(){
