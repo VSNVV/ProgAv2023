@@ -83,48 +83,58 @@ public class Hormiga extends Thread{
         }
         else if (this.getTipo() == "Soldada"){
             while (true){
-                //Verificamos que la hormiga es de tipo soldada
-                //Una vez dentro de la colonia, se irán a la zona de instrucción
-                getColonia().getZonaInstruccion().entraZonaInstruccion(this);
-                //Una vez dentro de la zona de instruccion, hacen entre 2 y 8 segundos de instruccion
-                getColonia().getZonaInstruccion().realizaInstruccion(this);
-                //Una vez que haya hecho la instrucción, saldrá de la zona de instrucción
-                getColonia().getZonaInstruccion().saleZonaInstruccion(this);
-                //Una vez fuera de la zona de instrucción, se irá a a zona de descanso
-                getColonia().getZonaDescanso().entraZonaDescanso(this);
-                //Una vez dentro de la zona de descanso, procede a descansar
-                getColonia().getZonaDescanso().realizaDescanso(this);
-                //Una vez que haya realizado el descanso, abandonará la zona de descanso
-                getColonia().getZonaDescanso().saleZonaDescanso(this);
-                //Como se ha completado una iteración, incrementamos en 1 el numero
-                setNumIteraciones(getNumIteraciones() + 1);
-                if (getNumIteraciones() == 6){
-                    //Cuando hayan hecho 6 iteraciones, se pasaran por la zona para comer, tardan en comer 3 segundos
-                    getColonia().getZonaComer().entraZonaComer(this);
-                    //Una vez dentro de la zona de comer, nos ponemos a comer
-                    getColonia().getZonaComer().come(this);
-                    //Cuando haya comido se va de la zona para comer y repite de nuevo
-                    getColonia().getZonaComer().saleZonaComer(this);
-                    //Como ya hemos comido, ahora las iteraciones se reiniciarán
-                    setNumIteraciones(0);
+                try{
+                    //Verificamos que la hormiga es de tipo soldada
+                    //Una vez dentro de la colonia, se irán a la zona de instrucción
+                    getColonia().getZonaInstruccion().entraZonaInstruccion(this);
+                    //Una vez dentro de la zona de instruccion, hacen entre 2 y 8 segundos de instruccion
+                    getColonia().getZonaInstruccion().realizaInstruccion(this);
+                    //Una vez que haya hecho la instrucción, saldrá de la zona de instrucción
+                    getColonia().getZonaInstruccion().saleZonaInstruccion(this);
+                    //Una vez fuera de la zona de instrucción, se irá a a zona de descanso
+                    getColonia().getZonaDescanso().entraZonaDescanso(this);
+                    //Una vez dentro de la zona de descanso, procede a descansar
+                    getColonia().getZonaDescanso().realizaDescanso(this);
+                    //Una vez que haya realizado el descanso, abandonará la zona de descanso
+                    getColonia().getZonaDescanso().saleZonaDescanso(this);
+                    //Como se ha completado una iteración, incrementamos en 1 el numero
+                    setNumIteraciones(getNumIteraciones() + 1);
+                    if (getNumIteraciones() == 6){
+                        //Cuando hayan hecho 6 iteraciones, se pasaran por la zona para comer, tardan en comer 3 segundos
+                        getColonia().getZonaComer().entraZonaComer(this);
+                        //Una vez dentro de la zona de comer, nos ponemos a comer
+                        getColonia().getZonaComer().come(this);
+                        //Cuando haya comido se va de la zona para comer y repite de nuevo
+                        getColonia().getZonaComer().saleZonaComer(this);
+                        //Como ya hemos comido, ahora las iteraciones se reiniciarán
+                        setNumIteraciones(0);
+                    }
+                }catch(InterruptedException ie){
+                    //Código de la invasion
                 }
             }
         }
         else if (this.getTipo() == "Cria"){
-            //Verificamos que la hormiga es de tipo cría
-            //UNa vez dentro de la colonia, van a la zona de comer
-            getColonia().getZonaComer().entraZonaComer(this);
-            //Una vez dentro de la zona de comer, se ponen a comer
-            getColonia().getZonaComer().come(this);
-            //Una vez que haya comido, sale de la zona de comer
-            getColonia().getZonaComer().saleZonaComer(this);
-            //Una vez que haya salido de la zona para comer, entran a la zona de descanso
-            getColonia().getZonaDescanso().entraZonaDescanso(this);
-            //Una vez dentro de la zona de descanso, descansan 4 segundos
-            getColonia().getZonaDescanso().realizaDescanso(this);
-            //Una vez haya realizado el descanso, sale de la zona de descanso
-            getColonia().getZonaDescanso().saleZonaDescanso(this);
-
+            while (true){
+                try{
+                    //Verificamos que la hormiga es de tipo cría
+                    //UNa vez dentro de la colonia, van a la zona de comer
+                    getColonia().getZonaComer().entraZonaComer(this);
+                    //Una vez dentro de la zona de comer, se ponen a comer
+                    getColonia().getZonaComer().come(this);
+                    //Una vez que haya comido, sale de la zona de comer
+                    getColonia().getZonaComer().saleZonaComer(this);
+                    //Una vez que haya salido de la zona para comer, entran a la zona de descanso
+                    getColonia().getZonaDescanso().entraZonaDescanso(this);
+                    //Una vez dentro de la zona de descanso, descansan 4 segundos
+                    getColonia().getZonaDescanso().realizaDescanso(this);
+                    //Una vez haya realizado el descanso, sale de la zona de descanso
+                    getColonia().getZonaDescanso().saleZonaDescanso(this);
+                }
+                catch(InterruptedException ie){
+                    //Código de invasion
+                }
+            }
         }
     }
 
