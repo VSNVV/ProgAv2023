@@ -30,6 +30,8 @@ public class ZonaComer {
     public void entraZonaComer(Hormiga hormiga){
         entradaSalida.lock();
         try{
+            //Para entrar, metemos a la hormiga en el JTextField de la zona para comer
+            getListaHormigasZonaComer().meterHormiga(hormiga);
             //Poner el listathreads para añadir el ID de la hormiga
             getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la zona para comer");
         }finally{
@@ -41,6 +43,8 @@ public class ZonaComer {
     public void saleZonaComer(Hormiga hormiga){
         entradaSalida.lock();
         try{
+            //Para salir, quitaremos a la hormiga del JTextField
+            getListaHormigasZonaComer().sacarHormiga(hormiga);
             //Poner el listathreads para quitar el JTextField
             getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la zona para comer");
         }finally{
