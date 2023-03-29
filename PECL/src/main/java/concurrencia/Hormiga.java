@@ -99,18 +99,19 @@ public class Hormiga extends Thread{
                     getColonia().getZonaDescanso().saleZonaDescanso(this);
                     //Como se ha completado una iteración, incrementamos en 1 el numero
                     setNumIteraciones(getNumIteraciones() + 1);
-                    if (getNumIteraciones() == 6){
+                    if (getNumIteraciones() >= 6){
+                        //En primer lugar, reiniciaremos el numero de iteraciones a 0
+                        setNumIteraciones(0);
                         //Cuando hayan hecho 6 iteraciones, se pasaran por la zona para comer, tardan en comer 3 segundos
                         getColonia().getZonaComer().entraZonaComer(this);
                         //Una vez dentro de la zona de comer, nos ponemos a comer
                         getColonia().getZonaComer().come(this);
                         //Cuando haya comido se va de la zona para comer y repite de nuevo
                         getColonia().getZonaComer().saleZonaComer(this);
-                        //Como ya hemos comido, ahora las iteraciones se reiniciarán
-                        setNumIteraciones(0);
                     }
                 }catch(InterruptedException ie){
                     //Código de la invasion
+                    getColonia().invasion(this);
                 }
             }
         }
@@ -132,7 +133,13 @@ public class Hormiga extends Thread{
                     getColonia().getZonaDescanso().saleZonaDescanso(this);
                 }
                 catch(InterruptedException ie){
-                    //Código de invasion
+                    //Código de refugio (ya que son crias)
+                    //Entran al refugio
+                    getColonia().getRefugio().entraRefugio(this);
+                    //Una vez dentro del refugio espera al fin de la invasion
+                    getColonia().getRefugio().esperaFinInvasion(this);
+                    //Una vez que la invasion haya terminado, podrá salir del refugio, empezando de 0 su actividad
+                    getColonia().getRefugio().saleRefugio(this);
                 }
             }
         }
