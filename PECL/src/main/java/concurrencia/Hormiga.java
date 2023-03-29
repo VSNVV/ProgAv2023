@@ -45,21 +45,26 @@ public class Hormiga extends Thread{
                     getColonia().getAlmacenComida().entraAlmacen(this);
                     //Una vez dentro del almacén recoge un elemento de comida
                     getColonia().getAlmacenComida().recogeElementoComida(this);
+                    try{
+                        Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
+                    }catch(InterruptedException ignored) {}
                     //Una vez que ha cogido el elemento de comida, saldra del almacen
                     getColonia().getAlmacenComida().saleAlmacen(this);
+                    //Desde que sale del almacen, está llevando comida
+                    getColonia().getListaHormigasLlevandoComida().meterHormiga(this);
                     //Una vez que haya salido del almacen, esta se meterá a la zona para comer, tarda entre 1 y 3 segundos
                     try {
-                        Thread.sleep((int) (Math.random() * 1000 + 2000));
+                        Thread.sleep((int) (((Math.random() + 1) * 1000) + (3000 - (1000 * 2))));
                     } catch (InterruptedException e) {}
+                    //Una vez que haya pasado el tiempo ya no estará llevando comida
+                    getColonia().getListaHormigasLlevandoComida().sacarHormiga(this);
                     //Una vez transcurrido el tiempo, entramos a la zona para comer
                     getColonia().getZonaComer().entraZonaComer(this);
                     //Una vez dentro de la zona para comer, depositamos el elemento de comida
                     getColonia().getZonaComer().depositaElementoComida(this);
                     //Una vez depositado el elemento de comida, abandonaremos la zona para comer
                     getColonia().getZonaComer().saleZonaComer(this);
-
                 }
-
             }
             else{
                 while (true){
@@ -74,6 +79,27 @@ public class Hormiga extends Thread{
                     //FIN DE RUTINA
                 }
             }
+        }
+        //Si una hormiga obrera tiene 10 iteraciones tiene que ir a descansar
+        if (getNumIteraciones() >= 10){
+            //Primero reiniciaremos las iteraciones a 0
+            setNumIteraciones(0);
+            //Una vez reiniciadas, entramos a la zona para comer
+            getColonia().getZonaComer().entraZonaComer(this);
+            //Una vez dentro se pondrá a comer
+            try {
+                getColonia().getZonaComer().come(this);
+            } catch (InterruptedException ignored) {}
+            //Una vez que ha comido saldrá de la zona de comer
+            getColonia().getZonaComer().saleZonaComer(this);
+            //Una vez fuera, entra a la zona de descanso
+            getColonia().getZonaDescanso().entraZonaDescanso(this);
+            //Una vez dentro de la zona de descanso
+            try{
+                getColonia().getZonaDescanso().realizaDescanso(this);
+            }
+            catch(InterruptedException ignored){}
+
         }
         else if (this.getTipo() == "Soldada"){
             while (true){
@@ -115,7 +141,7 @@ public class Hormiga extends Thread{
                     //Verificamos que la hormiga es de tipo cría
                     //UNa vez dentro de la colonia, van a la zona de comer
                     getColonia().getZonaComer().entraZonaComer(this);
-                    //Una vez dentro de la zona de comer, se ponen a comer
+                    //Una vez dentro de la zona de comer, cogen un alimento
                     getColonia().getZonaComer().come(this);
                     //Una vez que haya comido, sale de la zona de comer
                     getColonia().getZonaComer().saleZonaComer(this);
