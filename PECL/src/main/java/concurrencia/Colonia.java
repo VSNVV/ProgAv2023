@@ -1,6 +1,7 @@
 package concurrencia;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,8 +17,10 @@ public class Colonia { //Recurso compartido por todos los hilos
     private Lock cerrojoBuscarComida = new ReentrantLock();
     private Lock cerrojoInvasion = new ReentrantLock(); //Lock de la invasion del insecto
     private Condition hormigasEsperandoInvasion = cerrojoInvasion.newCondition();
+    private ArrayList<Hormiga> listaHormigas = new ArrayList<Hormiga>();
     private ListaThreads listaHormigasInvasor; //ListaThreads para manejar el JTextField de la invasion
-    private ListaThreads listaHormigasBuscandoComida;
+    private ListaThreads listaHormigasBuscandoComida; //ListaThreads para manejar el JTextField de hormigas buscando comida
+    private ListaThreads listaHormigasLlevandoComida; //ListaThreads para manejar el JTextField de hormigas llevando comida
     private AlmacenComida almacenComida; //Almacen de comida de la colonia
     private ZonaComer zonaComer; //Zona para comer de la colonia
     private ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
@@ -35,9 +38,10 @@ public class Colonia { //Recurso compartido por todos los hilos
         this.log = log;
         this.listaHormigasBuscandoComida = new ListaThreads(jTextFieldHormigasBuscandoComida);
         this.listaHormigasInvasor = new ListaThreads(jTextFieldHormigasContraInvasor);
+        this.listaHormigasLlevandoComida = new ListaThreads(jTextFieldHormiasLlevandoComida);
         //Crear aqui todas las zonas, para luego en distribuida pasar un solo objeto que tenga toda la parte concurrente
         this.almacenComida = new AlmacenComida(log, jTextFieldUnidadesComidaAlmacen, jTextFieldHormigasAlmacenComida);
-        this.zonaComer = new ZonaComer(log, jTextFieldUnidadesComidaZonaComer, jTextFieldHormiasLlevandoComida, jTextFieldHormigasZonaComer);
+        this.zonaComer = new ZonaComer(log, jTextFieldUnidadesComidaZonaComer, jTextFieldHormigasZonaComer);
         this.zonaInstruccion = new ZonaInstruccion(log, jTextFieldHormigasHaciendoInstruccion);
         this.zonaDescanso = new ZonaDescanso(log, jTextFieldHormigasDescansando);
         this.refugio = new Refugio(log, jTextFieldHormigasRefugio);
@@ -49,6 +53,16 @@ public class Colonia { //Recurso compartido por todos los hilos
         entradaColonia.lock();
         try{
             getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
+            //A todas las hormigas que entran les añadimos a un arraylist
+            getListaHormigas().add(hormiga);
+            if(hormiga.getTipo() == "Soldada"){
+                setNumHormigasSoldado(getNumHormigasSoldado() + 1);
+            }
+            if((hormiga.getTipo() == "Soldada") || (hormiga.getTipo() == "Cria")){
+                compruebaInvasion(hormiga);
+            }
+            //En el caso de que sea soldada u cria, tiene que mirar si hay una invasion
+
         }finally{
             entradaColonia.unlock();
         }
@@ -127,6 +141,21 @@ public class Colonia { //Recurso compartido por todos los hilos
         }
     }
 
+    //Método auxiliar a la invasion, para comprobar si hay una invasion o no a las hormigas que entran nuevas
+    private void compruebaInvasion(Hormiga hormiga){
+        cerrojoInvasion.lock();
+        try{
+            if(isInvasionInsecto() && !isInvasionEnCurso()){
+                //Se tiene que ir a la invasion, lanzaremos un InterruptedException
+                throw new InterruptedException();
+            }
+        }
+        catch (InterruptedException ignored) {}
+        finally{
+            cerrojoInvasion.unlock();
+        }
+    }
+
     //Métodos get y set
     public Log getLog(){
         return this.log;
@@ -152,29 +181,36 @@ public class Colonia { //Recurso compartido por todos los hilos
     public ListaThreads getListaHormigasBuscandoComida() {
         return listaHormigasBuscandoComida;
     }
+    public ListaThreads getListaHormigasLlevandoComida() {
+        return listaHormigasLlevandoComida;
+    }
+    public ArrayList<Hormiga> getListaHormigas() {
+        return listaHormigas;
+    }
 
     public boolean isInvasionInsecto() {
-        return this.invasionInsecto;
+        return invasionInsecto;
     }
-    public synchronized void setInvasionInsecto(boolean invasionInsecto){
+    public void setInvasionInsecto(boolean invasionInsecto) {
         this.invasionInsecto = invasionInsecto;
     }
-    public synchronized boolean isInvasionEnCurso() {
+    public boolean isInvasionEnCurso() {
         return invasionEnCurso;
     }
     public void setInvasionEnCurso(boolean invasionEnCurso) {
         this.invasionEnCurso = invasionEnCurso;
     }
-    public int getNumHormigasSoldado() {
+
+    public synchronized int getNumHormigasSoldado() {
         return numHormigasSoldado;
     }
-    public void setNumHormigasSoldado(int numHormigasSoldado) {
+    public synchronized void setNumHormigasSoldado(int numHormigasSoldado) {
         this.numHormigasSoldado = numHormigasSoldado;
     }
-    public int getNumHormigasEnInvasion() {
+    public synchronized int getNumHormigasEnInvasion() {
         return numHormigasEnInvasion;
     }
-    public void setNumHormigasEnInvasion(int numHormigasEnInvasion) {
+    public synchronized void setNumHormigasEnInvasion(int numHormigasEnInvasion) {
         this.numHormigasEnInvasion = numHormigasEnInvasion;
     }
 }
