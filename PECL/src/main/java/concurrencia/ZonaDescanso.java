@@ -47,22 +47,21 @@ public class ZonaDescanso {
     }
 
     //Método para que una hormiga haga su descanso
-    public void realizaDescanso(Hormiga hormiga){
-        try{
-            getLog().escribirEnLog("[Zona Descanso] --> La hormiga " + hormiga.getIdentificador() + " esta descansando");
-            if (hormiga.getTipo() == "Soldada"){
-                //Una hormiga soldada descansa un tiempo aleatorio entre 2 y 8 segundos
-                Thread.sleep((int) ((Math.random() + 1) * 2000 + 5000));
-            }
-            else if (hormiga.getTipo() == "Obrera"){
-                //Una hormiga obrera realiza un descanso de 1 segundo
-                Thread.sleep(1000);
-            }
-            else{
-                //Una hormiga cria realiza un descanso de 4 segundos
-                Thread.sleep(4000);
-            }
-        }catch (InterruptedException ignored){}
+    public void realizaDescanso(Hormiga hormiga) throws InterruptedException{
+        //Escribimos el evento en el log
+        getLog().escribirEnLog("[Zona Descanso] --> La hormiga " + hormiga.getIdentificador() + " esta descansando");
+        if (hormiga.getTipo() == "Soldada"){
+            //Una hormiga soldada descansa un tiempo aleatorio entre 2 y 8 segundos
+            Thread.sleep((int) ((Math.random() + 1) * 2000 + 5000));
+        }
+        else if (hormiga.getTipo() == "Obrera"){
+            //Una hormiga obrera realiza un descanso de 1 segundo
+            Thread.sleep(1000);
+        }
+        else{
+            //Una hormiga cria realiza un descanso de 4 segundos
+            Thread.sleep(4000);
+        }
     }
 
     //Métodos get y set

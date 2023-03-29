@@ -45,12 +45,11 @@ public class ZonaInstruccion {
     }
 
     //Método para hacer instruccion
-    public void realizaInstruccion(Hormiga hormiga){
+    public void realizaInstruccion(Hormiga hormiga) throws InterruptedException{
         //Hacen instrucción entre 2 y 8 segundos
         getLog().escribirEnLog("[Zona Instruccion] --> La hormiga " + hormiga.getIdentificador() + " esta haciendo instruccion");
-        try{
-            Thread.sleep((int) ((Math.random() + 1) * 4000 + 4000));
-        }catch (InterruptedException ignored){}
+        Thread.sleep((int) ((Math.random() + 1) * 4000 + 4000));
+        getLog().escribirEnLog("[Zona Instruccion] --> La hormiga " + hormiga.getIdentificador() + " ha terminado instruccion");
     }
     //Métodos get y set
 

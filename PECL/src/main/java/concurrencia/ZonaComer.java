@@ -73,26 +73,22 @@ public class ZonaComer {
     }
 
     //Método para que una hormiga coma
-    public void come(Hormiga hormiga){
-        try{
-            cogeElementoComida(hormiga);
-            getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " esta comiendo");
-            //Dependiendo del tipo de hormiga, tarda más o menos en comer
-            if((hormiga.getTipo() == "Obrera") || (hormiga.getTipo() == "Soldada")){
-                //Las hormigas obreras y soldadas tardan en comer 3 segundos
-                Thread.sleep(3000);
-            }
-            else if(hormiga.getTipo() == "Cria"){
-                //Una hormiga cria tarda en comer entre 3 y 5 segundos
-                Thread.sleep((int) (((Math.random() + 1) * 3000 ) + 2000));
-            }
-
-        }catch(InterruptedException ignored){}
-
+    public void come(Hormiga hormiga) throws InterruptedException{
+        cogeElementoComida(hormiga);
+        getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " esta comiendo");
+        //Dependiendo del tipo de hormiga, tarda más o menos en comer
+        if((hormiga.getTipo() == "Obrera") || (hormiga.getTipo() == "Soldada")){
+            //Las hormigas obreras y soldadas tardan en comer 3 segundos
+            Thread.sleep(3000);
+        }
+        else if(hormiga.getTipo() == "Cria"){
+            //Una hormiga cria tarda en comer entre 3 y 5 segundos
+            Thread.sleep((int) (((Math.random() + 1) * 3000 ) + 2000));
+        }
     }
 
     //Método auxiliar al método comer
-    private void cogeElementoComida(Hormiga hormiga){
+    private void cogeElementoComida(Hormiga hormiga) throws InterruptedException{
         elementoComida.lock();
         try{
             //En primer lugar tenemos que comprobar si hay un elemento de comida disponible
@@ -105,7 +101,7 @@ public class ZonaComer {
             }
             //En el caso de que no haya que esperar, simplemente cogemos el alimento
             setNumElementosComida(getNumElementosComida() - 1);
-        }catch(InterruptedException ignored) {}
+        }
         finally{
             elementoComida.unlock();
         }
