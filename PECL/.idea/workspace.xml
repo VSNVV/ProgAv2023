@@ -39,7 +39,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/victorsanavia/Documents/Repositorios git/ProgAv2023/PECL/src/main/java/concurrencia",
+    "last_opened_file_path": "C:/Users/victorsanavia/Documents/Repositorios git/ProgAv2023/PECL",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -64,7 +64,10 @@
       <workItem from="1679935452492" duration="1314000" />
       <workItem from="1679936776520" duration="4279000" />
       <workItem from="1679944240129" duration="9063000" />
-      <workItem from="1680016243748" duration="10018000" />
+      <workItem from="1680016243748" duration="10415000" />
+      <workItem from="1680077167072" duration="1466000" />
+      <workItem from="1680081093387" duration="2841000" />
+      <workItem from="1680086076050" duration="2247000" />
     </task>
     <servers />
   </component>
