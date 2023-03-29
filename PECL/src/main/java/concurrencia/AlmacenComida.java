@@ -10,6 +10,7 @@ public class AlmacenComida {
     private Log log;
     private int numElementosComida = 0;
     private int numHormigasDentro = 0;
+    private int numHormigasEsperando = 0;
     private Lock entradaSalida = new ReentrantLock(), unidadComida = new ReentrantLock();
     private Condition colaEspera = entradaSalida.newCondition(), esperaElementoComida = unidadComida.newCondition();
     private boolean hormigaEsperandoElementoComida;
@@ -75,7 +76,10 @@ public class AlmacenComida {
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida");
             //Una vez que han dejado un elemento de comida, despertarán a una hormiga en caso de que esté esperando un elemento de comida
-            esperaElementoComida.signal();
+            if(getNumHormigasEsperando() > 0){
+                //Se verifica que hay una hormiga esperando comida, por tanto tenemos que dar signal
+                esperaElementoComida.signal();
+            }
 
         } catch (InterruptedException e) {}
         finally{
@@ -88,20 +92,21 @@ public class AlmacenComida {
         unidadComida.lock();
         try{
             //En primer lugar, tenemos que comprobar si hay unidades que recoger
-            if (getNumElementosComida() == 0){
-                //Se verifica que no hay elementos de comida para recoger, por tanto se tendrá que esperar a que haya uno
-                try{
-                    setHormigaEsperandoElementoComida(true); //Hay una hormiga esperando un elemento de comida para recoger
-                    esperaElementoComida.await();
-                }catch(InterruptedException ie){}
+            if(true){
+                //No hay elementos para recoger, por tanto incrementamos el numero de hormigas que estan esperando
+                setNumHormigasEsperando(getNumHormigasEsperando() + 1);
+                esperaElementoComida.await();
+                //Cuando depsierte ya no estará esperando
+                setNumHormigasEsperando(getNumHormigasEsperando() - 1);
             }
-            //Se verifica que hay un elemento de comida que recoger, tarda entre 1 y 2 segundos
-            Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
+            //Se verifica que hay un elemento de comida que recoger
             //Una vez transcurrido el tiempo, cogemos el elemento de comida
             setNumElementosComida(getNumElementosComida() - 1);
             //Una ve recogido, actualizamos el valor del JTextField
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida");
+            //Esta operacion tarda entre 1 y 2 segundos
+
 
         } catch (InterruptedException e) {}
         finally{
@@ -132,10 +137,10 @@ public class AlmacenComida {
     public void setNumElementosComida(int numElementosComida){
         this.numElementosComida = numElementosComida;
     }
-    public boolean isHormigaEsperandoElementoComida(){
-        return this.hormigaEsperandoElementoComida;
+    public int getNumHormigasEsperando() {
+        return numHormigasEsperando;
     }
-    public void setHormigaEsperandoElementoComida(boolean hormigaEsperandoElementoComida){
-        this.hormigaEsperandoElementoComida = hormigaEsperandoElementoComida;
+    public void setNumHormigasEsperando(int numHormigasEsperando) {
+        this.numHormigasEsperando = numHormigasEsperando;
     }
 }

@@ -12,17 +12,15 @@ public class ZonaComer {
     private Condition esperaAlimento = elementoComida.newCondition();
     private int numElementosComida = 0;
     private boolean hormigaEsperandoAlimento = false;
-    private ListaThreads unidadesElementosComida, listaHormigasLlevandoComida, listaHormigasZonaComer;
+    private ListaThreads unidadesElementosComida, listaHormigasZonaComer;
 
 
     //Métodos de la clase ZonaComer
 
     //Método constructor
-    public ZonaComer(Log log, JTextField jTextFieldUnidadesComidaZonaComer, JTextField jTextFieldHormiasLlevandoComida,
-                     JTextField jTextFieldHormigasZonaComer){
+    public ZonaComer(Log log, JTextField jTextFieldUnidadesComidaZonaComer, JTextField jTextFieldHormigasZonaComer){
         this.log = log;
         this.unidadesElementosComida = new ListaThreads(jTextFieldUnidadesComidaZonaComer);
-        this.listaHormigasLlevandoComida = new ListaThreads(jTextFieldHormiasLlevandoComida);
         this.listaHormigasZonaComer = new ListaThreads(jTextFieldHormigasZonaComer);
     }
 
@@ -63,12 +61,7 @@ public class ZonaComer {
             //Imprimimos el numero en el JTextField
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             //Antes de irnos, miraremos si hay alguna hormiga esperando comida
-            if(isHormigaEsperandoAlimento()){
-                //Se verifica que hay una hormiga esperando alimento, por tanto tenemos que despertarla para que coma
-                esperaAlimento.signal();
-                //Como no hay hormigas esperando, pondremos el booleano a false
-                setHormigaEsperandoAlimento(false);
-            }
+            esperaAlimento.signal();
 
         } catch (InterruptedException e) {}
         finally{
@@ -91,20 +84,15 @@ public class ZonaComer {
         }
     }
 
-    //Método auxiliar al método comer
+    //Método auxiliar al método comer, para coger un elemento de comida
     private void cogeElementoComida(Hormiga hormiga) throws InterruptedException{
         elementoComida.lock();
         try{
             //En primer lugar tenemos que comprobar si hay un elemento de comida disponible
-            if(getNumElementosComida() == 0){
-                //Se verifica que no hay elementos de comida disponibles, por tanto tendrán que esperar a que haya alguno
-                //Indicaremos que estamos esperando
-                setHormigaEsperandoAlimento(true);
-                //Una vez indicado, esperaremos a que un hilo nos despierte
-                esperaAlimento.await();
-            }
+            esperaAlimento.await();
             //En el caso de que no haya que esperar, simplemente cogemos el alimento
             setNumElementosComida(getNumElementosComida() - 1);
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
         }
         finally{
             elementoComida.unlock();
@@ -120,10 +108,6 @@ public class ZonaComer {
     }
     public void setNumElementosComida(int numElementosComida){
         this.numElementosComida = numElementosComida;
-    }
-
-    public ListaThreads getListaHormigasLlevandoComida() {
-        return listaHormigasLlevandoComida;
     }
 
     public ListaThreads getListaHormigasZonaComer() {
