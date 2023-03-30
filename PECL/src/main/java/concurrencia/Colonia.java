@@ -59,9 +59,6 @@ public class Colonia { //Recurso compartido por todos los hilos
             if(hormiga.getTipo() == "Soldada"){
                 setNumHormigasSoldado(getNumHormigasSoldado() + 1);
             }
-            if((hormiga.getTipo() == "Soldada") || (hormiga.getTipo() == "Cria")){
-                compruebaInvasion(hormiga);
-            }
             //En el caso de que sea soldada u cria, tiene que mirar si hay una invasion
 
         }finally{
@@ -84,7 +81,7 @@ public class Colonia { //Recurso compartido por todos los hilos
             //Como el tunel de salida 1 está ocupado en ese momento, la hormiga intentará salir por el tunel de salida 2
             salidaColonia2.lock();
             try{
-                getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + "ha salido de la colonia por el tunel de salida 2");
+                getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la colonia por el tunel de salida 2");
             }finally{
                 salidaColonia2.unlock();
             }
@@ -110,9 +107,9 @@ public class Colonia { //Recurso compartido por todos los hilos
 
     //Método para comprobar su hay una invasion
     public void invasion(Hormiga hormiga){
+        actualizaEstadoInvasion(hormiga);
         cerrojoInvasion.lock();
         try{
-            actualizaEstadoInvasion(hormiga);
             if ((isInvasionInsecto() && (!isInvasionEnCurso()))){
                 //Se verica que hay una invasion activa y que la invasion no esta en curso, por tanto se puede unir
                 //Una hormiga se suma a la invasión, por tanto incrementamos el numero de hormigas en la invasion
@@ -148,22 +145,28 @@ public class Colonia { //Recurso compartido por todos los hilos
     }
 
     //Método auxiliar a la invasion, para comprobar si hay una invasion o no a las hormigas que entran nuevas
-    private void compruebaInvasion(Hormiga hormiga){
+    public void compruebaInvasion(Hormiga hormiga){
         cerrojoInvasion.lock();
         try{
-            if(isInvasionInsecto() && !isInvasionEnCurso()){
+            if((isInvasionInsecto() && !isInvasionEnCurso()) && (hormiga.getTipo() != "Obrera")){
                 //Se tiene que ir a la invasion, lanzaremos un InterruptedException
-                throw new InterruptedException();
+                {
+                    if(hormiga.getTipo().equals("Soldada")){
+                        invasion(hormiga);
+                    }
+                    else{
+                        getRefugio().entraRefugio(hormiga);
+                    }
+                }
             }
         }
-        catch (InterruptedException ignored) {}
         finally{
             cerrojoInvasion.unlock();
         }
     }
 
     //Método auxiliar a la invasion
-    public void actualizaEstadoInvasion(Hormiga hormiga){
+    private synchronized void actualizaEstadoInvasion(Hormiga hormiga){
         try{
             //Tenemos que ver en que zona está la hormiga, que pueden estar en ZonaComer, ZonaInstruccion o ZonaDescanso
             //ZonaComer
