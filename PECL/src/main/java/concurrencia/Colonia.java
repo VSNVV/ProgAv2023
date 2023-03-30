@@ -1,6 +1,7 @@
 package concurrencia;
 
 import javax.swing.*;
+import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -111,6 +112,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     public void invasion(Hormiga hormiga){
         cerrojoInvasion.lock();
         try{
+            actualizaEstadoInvasion(hormiga);
             if ((isInvasionInsecto() && (!isInvasionEnCurso()))){
                 //Se verica que hay una invasion activa y que la invasion no esta en curso, por tanto se puede unir
                 //Una hormiga se suma a la invasión, por tanto incrementamos el numero de hormigas en la invasion
@@ -158,6 +160,27 @@ public class Colonia { //Recurso compartido por todos los hilos
         finally{
             cerrojoInvasion.unlock();
         }
+    }
+
+    //Método auxiliar a la invasion
+    public void actualizaEstadoInvasion(Hormiga hormiga){
+        try{
+            //Tenemos que ver en que zona está la hormiga, que pueden estar en ZonaComer, ZonaInstruccion o ZonaDescanso
+            //ZonaComer
+            if(getZonaComer().getListaHormigasZonaComer().getListaHormigas().contains(hormiga)){
+                //Está en ZonaComer, por tanto deberán salir del almacen
+                getZonaComer().saleZonaComer(hormiga);
+            }
+            else if(getZonaInstruccion().getListaHormigasHaciendoInstruccion().getListaHormigas().contains(hormiga)){
+                //Está haciendo instruccion, por tanto se va de ZonaInstruccion
+                getZonaInstruccion().saleZonaInstruccion(hormiga);
+            }
+            else if(getZonaDescanso().getListaHormigasDescansando().getListaHormigas().contains(hormiga)){
+                //Está haciendo un descanso, por tanto saldrán del descanso
+                getZonaDescanso().saleZonaDescanso(hormiga);
+            }
+        }
+        catch(InterruptedException ignored){}
     }
 
     //Métodos get y set
