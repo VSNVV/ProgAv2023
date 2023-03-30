@@ -10,7 +10,7 @@ public class ZonaComer {
     private Log log;
     private Lock entradaSalida = new ReentrantLock(), elementoComida = new ReentrantLock();
     private Condition esperaAlimento = elementoComida.newCondition();
-    private int numElementosComida = 0;
+    private int numElementosComida = 0, numHormigasEsprando = 0;
     private boolean hormigaEsperandoAlimento = false;
     private ListaThreads unidadesElementosComida, listaHormigasZonaComer;
 
@@ -54,16 +54,15 @@ public class ZonaComer {
     public void depositaElementoComida(Hormiga hormiga){
         elementoComida.lock();
         try{
-            //En depositar un elemento de comida se tarda entre 1 y 2 segundos
-            Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
             //Una vez transcurrido el timepo, incrementamos el numero de elementos de comida
             setNumElementosComida(getNumElementosComida() + 1);
             //Imprimimos el numero en el JTextField
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             //Antes de irnos, miraremos si hay alguna hormiga esperando comida
-            esperaAlimento.signal();
-
-        } catch (InterruptedException e) {}
+            if(getNumHormigasEsprando() > 0){
+                esperaAlimento.signal();
+            }
+        }
         finally{
             elementoComida.unlock();
         }
@@ -89,7 +88,12 @@ public class ZonaComer {
         elementoComida.lock();
         try{
             //En primer lugar tenemos que comprobar si hay un elemento de comida disponible
-            esperaAlimento.await();
+            if(getNumElementosComida() <= 0){
+                setNumHormigasEsprando(getNumHormigasEsprando() + 1);
+                esperaAlimento.await();
+                //Ya no estaremos esperando
+                setNumHormigasEsprando(getNumHormigasEsprando() - 1);
+            }
             //En el caso de que no haya que esperar, simplemente cogemos el alimento
             setNumElementosComida(getNumElementosComida() - 1);
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
@@ -103,10 +107,10 @@ public class ZonaComer {
     public Log getLog(){
         return this.log;
     }
-    public int getNumElementosComida(){
+    public synchronized int getNumElementosComida(){
         return this.numElementosComida;
     }
-    public void setNumElementosComida(int numElementosComida){
+    public synchronized void setNumElementosComida(int numElementosComida){
         this.numElementosComida = numElementosComida;
     }
 
@@ -118,11 +122,11 @@ public class ZonaComer {
         return unidadesElementosComida;
     }
 
-    public boolean isHormigaEsperandoAlimento() {
-        return hormigaEsperandoAlimento;
+    public synchronized int getNumHormigasEsprando() {
+        return numHormigasEsprando;
     }
 
-    public void setHormigaEsperandoAlimento(boolean hormigaEsperandoAlimento) {
-        this.hormigaEsperandoAlimento = hormigaEsperandoAlimento;
+    public synchronized void setNumHormigasEsprando(int numHormigasEsprando) {
+        this.numHormigasEsprando = numHormigasEsprando;
     }
 }
