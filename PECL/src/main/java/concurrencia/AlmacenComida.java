@@ -88,22 +88,18 @@ public class AlmacenComida {
     public void recogeElementoComida(Hormiga hormiga){
         unidadComida.lock();
         try{
-            //En primer lugar, tenemos que comprobar si hay unidades que recoger
-            if(getNumElementosComida() <= 0){
-                //No hay elementos para recoger, por tanto incrementamos el numero de hormigas que estan esperando
-                setNumHormigasEsperando(getNumHormigasEsperando() + 1);
+            //Cuando entran a recoger la comida, primero tenemos que ver si podemos recogerla o no
+            if((getNumElementosComida() - 1) < 0){
+                //Verificamos que no se puede coger, por tanto tendremos que esperar
+                setNumHormigasEsperando(getNumHormigasEsperando() + 1); //Incrementamos el numero de hormigas esperando
                 esperaElementoComida.await();
-                //Cuando depsierte ya no estará esperando
-                setNumHormigasEsperando(getNumHormigasEsperando() - 1);
             }
-            //Se verifica que hay un elemento de comida que recoger
-            //Una vez transcurrido el tiempo, cogemos el elemento de comida
+            //Se verifica que hay un elemento de comida para recoger, por tanto, lo cogeremos
             setNumElementosComida(getNumElementosComida() - 1);
-            //Una ve recogido, actualizamos el valor del JTextField
+            //Actualizamos el JTextField
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
-            getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida");
-            //Esta operacion tarda entre 1 y 2 segundos
-
+            //Escribimos el evento en el log
+            getLog().escribirEnLog("[Almacen Comida] La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida del almacen");
 
         } catch (InterruptedException e) {}
         finally{
