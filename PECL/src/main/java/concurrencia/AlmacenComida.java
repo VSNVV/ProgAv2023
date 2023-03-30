@@ -92,7 +92,7 @@ public class AlmacenComida {
         unidadComida.lock();
         try{
             //En primer lugar, tenemos que comprobar si hay unidades que recoger
-            if(true){
+            if(getNumElementosComida() <= 0){
                 //No hay elementos para recoger, por tanto incrementamos el numero de hormigas que estan esperando
                 setNumHormigasEsperando(getNumHormigasEsperando() + 1);
                 esperaElementoComida.await();
@@ -131,10 +131,10 @@ public class AlmacenComida {
     public void setNumHormigasDentro(int numHormigasDentro){
         this.numHormigasDentro = numHormigasDentro;
     }
-    public int getNumElementosComida(){
+    public synchronized int getNumElementosComida(){
         return this.numElementosComida;
     }
-    public void setNumElementosComida(int numElementosComida){
+    public synchronized void setNumElementosComida(int numElementosComida){
         this.numElementosComida = numElementosComida;
     }
     public int getNumHormigasEsperando() {
