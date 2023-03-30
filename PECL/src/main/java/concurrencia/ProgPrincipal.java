@@ -212,14 +212,16 @@ public class ProgPrincipal extends javax.swing.JFrame {
     private void jButtonGenerarAmenazaInsectoInvasorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
         // TODO add your handling code here:
         //Activaremos el booleano de invasion
-        getColonia().setInvasionInsecto(true);
-        //Una vez activada darmeos interrupt a todas las hormiga soldado que esten presentes en la colonia
-        for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
-            if((getColonia().getListaHormigas().get(i).getTipo() == "Cria") || (getColonia().getListaHormigas().get(i).getTipo() == "Soldada")){
-                getColonia().getListaHormigas().get(i).interrupt();
+        if (!getColonia().isInvasionInsecto()){
+            getColonia().setInvasionInsecto(true);
+            //Una vez activada darmeos interrupt a todas las hormiga soldado que esten presentes en la colonia
+            for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
+                if((getColonia().getListaHormigas().get(i).getTipo() == "Cria") || (getColonia().getListaHormigas().get(i).getTipo() == "Soldada")){
+                    getColonia().getListaHormigas().get(i).interrupt();
+                }
             }
         }
-
+        //Si ya hay una invasión activa, este botón es inútil
     }//GEN-LAST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
 
     private void jButtonPausarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPausarReanudarActionPerformed
