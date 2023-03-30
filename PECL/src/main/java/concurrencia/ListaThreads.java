@@ -38,7 +38,7 @@ public class ListaThreads{
         tf.setText(contenido);
     }
 
-    private void imprimirNumero(){
-
+    public ArrayList<Hormiga> getListaHormigas() {
+        return listaHormigas;
     }
 }
