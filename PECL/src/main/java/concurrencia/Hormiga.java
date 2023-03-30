@@ -32,6 +32,7 @@ public class Hormiga extends Thread{
 
     //Método run
     public void run(){
+        getColonia().compruebaInvasion(this);
         //Todas las hormigas, sin distinción, tienen que entrar a la colonia
         getColonia().entraColonia(this);
         //Según el tipo de hormiga, esta tendrá una rutina u otra
@@ -58,18 +59,22 @@ public class Hormiga extends Thread{
                         //Una vez transcurrido el tiempo, entramos a la zona para comer
                         getColonia().getZonaComer().entraZonaComer(this);
                         //Una vez dentro de la zona para comer, depositamos el elemento de comida
+                        //En depositar un elemento de comida se tarda entre 1 y 2 segundos
+                        Thread.sleep((int) (((Math.random() + 1) * 1000) + (2000 - (1000 * 2))));
+                        //Una vez esperado el tiempo, depositamos
                         getColonia().getZonaComer().depositaElementoComida(this);
                         //Una vez depositado el elemento de comida, abandonaremos la zona para comer
                         getColonia().getZonaComer().saleZonaComer(this);
 
                     }
                     else{
-
                         //Verificamos que la hormiga obrera tiene un identificador impar
                         //La hormiga sale al exterior en busca de un elemento de comida
                         getColonia().buscaComida(this);
                         //Una vez esté dentro de la colonia deposita el elemento de comida en el almacen de comida
                         getColonia().getAlmacenComida().entraAlmacen(this);
+                        //Para depositar, se tarda un tiempo aleatorio entre 2 y 4 segundos
+                        Thread.sleep((int) (((Math.random() + 1) * 2000) + (4000 - (2000 * 2))));
                         getColonia().getAlmacenComida().depositaElementoComida(this);
                         //Una vez depositado, sale del almacen de comida
                         getColonia().getAlmacenComida().saleAlmacen(this);
