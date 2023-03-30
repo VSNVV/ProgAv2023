@@ -68,8 +68,6 @@ public class AlmacenComida {
     public void depositaElementoComida(Hormiga hormiga){
         unidadComida.lock();
         try{
-            //Para depositar, se tarda un tiempo aleatorio entre 2 y 4 segundos
-            Thread.sleep((int) (((Math.random() + 1) * 2000) + (4000 - (2000 * 2))));
             //Una vez transcurrido el tiempo, añadimos el elemento de comida
             setNumElementosComida(getNumElementosComida() + 1);
             //Una vez que se ha añadido, actualizamos el valor en el JTextField
@@ -80,8 +78,7 @@ public class AlmacenComida {
                 //Se verifica que hay una hormiga esperando comida, por tanto tenemos que dar signal
                 esperaElementoComida.signal();
             }
-
-        } catch (InterruptedException e) {}
+        }
         finally{
             unidadComida.unlock();
         }
