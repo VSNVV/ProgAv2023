@@ -152,6 +152,7 @@ public class Hormiga extends Thread{
                 }
                 catch(InterruptedException ie){
                     //Código de refugio (ya que son crias)
+                    getColonia().actualizaEstadoInvasion(this);
                     //Entran al refugio
                     getColonia().getRefugio().entraRefugio(this);
                     //Una vez dentro del refugio espera al fin de la invasion
