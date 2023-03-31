@@ -101,7 +101,7 @@ public class AlmacenComida {
             //Escribimos el evento en el log
             getLog().escribirEnLog("[Almacen Comida] La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida del almacen");
 
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException ignored) {}
         finally{
             unidadComida.unlock();
         }
