@@ -71,7 +71,7 @@ public class Colonia { //Recurso compartido por todos los hilos
         if(salidaColonia1.tryLock()){
             try{
                 //Se verifica que el tunel de salida 1 está libre, por tanto puede salir por ese tunel
-                getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + "ha salido de la colonia por el tunel de salida 1");
+                getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la colonia por el tunel de salida 1");
 
             }finally{
                 salidaColonia1.unlock();
@@ -131,6 +131,8 @@ public class Colonia { //Recurso compartido por todos los hilos
                     //Una vez finalizada la invasión, despertamos a todos los hilos y escribimos el evento en el log
                     getLog().escribirEnLog("[Invasion] --> La invasion ha terminado, el insecto invasor ha huido");
                     hormigasEsperandoInvasion.signalAll();
+                    getRefugio().indicaFinInvasion();
+
                 }
                 //Una vez finalizada la invasion, las hormigas se irán de la invasión
                 setNumHormigasEnInvasion(getNumHormigasEnInvasion() - 1);
@@ -166,7 +168,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     }
 
     //Método auxiliar a la invasion
-    private synchronized void actualizaEstadoInvasion(Hormiga hormiga){
+    public synchronized void actualizaEstadoInvasion(Hormiga hormiga){
         try{
             //Tenemos que ver en que zona está la hormiga, que pueden estar en ZonaComer, ZonaInstruccion o ZonaDescanso
             //ZonaComer
