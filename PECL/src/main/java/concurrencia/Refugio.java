@@ -82,4 +82,14 @@ public class Refugio {
     public void setListaHormigasRefugio(ListaThreads listaHormigasRefugio) {
         this.listaHormigasRefugio = listaHormigasRefugio;
     }
+
+    public void indicaFinInvasion(){
+        invasion.lock();
+        try{
+            finInvasion.signalAll();
+        }
+        finally{
+            invasion.unlock();
+        }
+    }
 }
