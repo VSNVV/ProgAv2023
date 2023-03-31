@@ -216,8 +216,10 @@ public class ProgPrincipal extends javax.swing.JFrame {
             getColonia().setInvasionInsecto(true);
             //Una vez activada darmeos interrupt a todas las hormiga soldado que esten presentes en la colonia
             for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
-                if((getColonia().getListaHormigas().get(i).getTipo() == "Cria") || (getColonia().getListaHormigas().get(i).getTipo() == "Soldada")){
-                    getColonia().getListaHormigas().get(i).interrupt();
+                Hormiga hormigaActual = getColonia().getListaHormigas().get(i);
+                String tipoHormiga = hormigaActual.getTipo();
+                if (tipoHormiga.equals("Soldada") || tipoHormiga.equals("Cria")){
+                    hormigaActual.interrupt();
                 }
             }
         }
