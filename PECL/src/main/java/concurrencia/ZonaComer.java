@@ -1,16 +1,17 @@
 package concurrencia;
 
 import javax.swing.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 public class ZonaComer {
     //Atrubutos de la clase ZonaComer
     private Log log;
-    private Lock entradaSalida = new ReentrantLock(), elementoComida = new ReentrantLock();
-    private Condition esperaAlimento = elementoComida.newCondition();
-    private int numElementosComida = 0, numHormigasEsprando = 0;
+    private Semaphore semaforoEntradaSalida = new Semaphore(1, true); //Semáforo para entrar y salir
+    private Semaphore semaforoExclusionMutua = new Semaphore(1); //Semáforo para asegurar exclusion mutua a la hora de recoger y depositar
+    private Semaphore semaforoDepositar = new Semaphore(1); //Semaforo para depositar el elemento de comida
+    private Semaphore semaforoCoger = new Semaphore(0); //Semaforo para coger el elemento de comida
+
+    private int numElementosComida = 0, numHormigasEsprando = 0, numHormigasZonaComer = 0;
     private boolean hormigaEsperandoAlimento = false;
     private ListaThreads unidadesElementosComida, listaHormigasZonaComer;
 
@@ -25,108 +26,127 @@ public class ZonaComer {
     }
 
     //Método para entrar a la zona para comer
-    public void entraZonaComer(Hormiga hormiga){
-        entradaSalida.lock();
+    public void entra(Hormiga hormiga){
         try{
-            //Para entrar, metemos a la hormiga en el JTextField de la zona para comer
+            semaforoEntradaSalida.acquire();
+            setNumHormigasZonaComer(getNumHormigasZonaComer() + 1); //Incrementamos el numero de hormigas en la ZonaComer
             getListaHormigasZonaComer().meterHormiga(hormiga);
-            //Poner el listathreads para añadir el ID de la hormiga
-            getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la zona para comer");
-        }finally{
-            entradaSalida.unlock();
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la zona para comer");
+            semaforoEntradaSalida.release();
         }
+        catch(InterruptedException ie){}
     }
 
-    //Método para salir de la zona de comer
-    public void saleZonaComer(Hormiga hormiga){
-        entradaSalida.lock();
+    //Método para salir de la zona para comer
+    public void sale(Hormiga hormiga){
         try{
-            //Para salir, quitaremos a la hormiga del JTextField
-            getListaHormigasZonaComer().sacarHormiga(hormiga);
-            //Poner el listathreads para quitar el JTextField
-            getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la zona para comer");
-        }finally{
-            entradaSalida.unlock();
+            semaforoEntradaSalida.acquire();
+            setNumHormigasZonaComer(getNumHormigasEsprando() - 1); //Decrementamos el numero de hormigas en la lista de hormigas
+            getListaHormigasZonaComer().sacarHormiga(hormiga); //Nos quitamos de la lista
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la zona para comer"); //Escribimos el evento en el log
+            semaforoEntradaSalida.release();
         }
+        catch(InterruptedException ie){}
     }
 
     //Método para depositar un elemento de comida
     public void depositaElementoComida(Hormiga hormiga){
-        elementoComida.lock();
         try{
-            //Una vez transcurrido el timepo, incrementamos el numero de elementos de comida
-            setNumElementosComida(getNumElementosComida() + 1);
-            //Imprimimos el numero en el JTextField
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
-            //Antes de irnos, miraremos si hay alguna hormiga esperando comida
-            if(getNumHormigasEsprando() > 0){
-                esperaAlimento.signal();
-            }
-        }
+            semaforoDepositar.acquire();
+            semaforoExclusionMutua.acquire();
+            setNumElementosComida(getNumElementosComida() + 1); //Incrementamos el numero de elementos de comida
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida()); //Imprimimos el numero de elementos de comida
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en ZonaComer");
+        }catch(InterruptedException ie){}
         finally{
-            elementoComida.unlock();
+            semaforoExclusionMutua.release();
+            semaforoCoger.release();
         }
     }
 
-    //Método para que una hormiga coma
-    public void come(Hormiga hormiga) throws InterruptedException{
-        cogeElementoComida(hormiga);
-        getLog().escribirEnLog("[Zona Comer] --> La hormiga " + hormiga.getIdentificador() + " esta comiendo");
-        //Dependiendo del tipo de hormiga, tarda más o menos en comer
-        if((hormiga.getTipo() == "Obrera") || (hormiga.getTipo() == "Soldada")){
-            //Las hormigas obreras y soldadas tardan en comer 3 segundos
-            Thread.sleep(3000);
+    //Método para coger un elemento de comida
+    public void cogeElementoComida(Hormiga hormiga) throws InterruptedException{
+        try{
+            semaforoCoger.acquire();
+            semaforoExclusionMutua.acquire();
+            setNumElementosComida(getNumElementosComida() - 1); //Decrementamos el numero de elementos de comida
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida()); //Imprimimos el numero de elementos de comida
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida en ZonaComer");
         }
-        else if(hormiga.getTipo() == "Cria"){
-            //Una hormiga cria tarda en comer entre 3 y 5 segundos
-            Thread.sleep((int) (((Math.random() + 1) * 3000) + (5000 - (3000 * 2))));
+        finally{
+            semaforoExclusionMutua.release();
+            semaforoDepositar.release();
         }
     }
 
-    //Método auxiliar al método comer, para coger un elemento de comida
-    private void cogeElementoComida(Hormiga hormiga) throws InterruptedException{
-        elementoComida.lock();
-        try{
-            //En primer lugar tenemos que comprobar si hay un elemento de comida disponible
-            if(getNumElementosComida() <= 0){
-                setNumHormigasEsprando(getNumHormigasEsprando() + 1);
-                esperaAlimento.await();
-                //Ya no estaremos esperando
-                setNumHormigasEsprando(getNumHormigasEsprando() - 1);
-            }
-            //En el caso de que no haya que esperar, simplemente cogemos el alimento
-            setNumElementosComida(getNumElementosComida() - 1);
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
-        }
-        finally{
-            elementoComida.unlock();
-        }
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Métodos get y set
-    public Log getLog(){
-        return this.log;
+
+    public Log getLog() {
+        return log;
     }
-    public synchronized int getNumElementosComida(){
-        return this.numElementosComida;
+
+    public int getNumElementosComida() {
+        return numElementosComida;
     }
-    public synchronized void setNumElementosComida(int numElementosComida){
+
+    public void setNumElementosComida(int numElementosComida) {
         this.numElementosComida = numElementosComida;
+    }
+
+    public int getNumHormigasEsprando() {
+        return numHormigasEsprando;
+    }
+
+    public void setNumHormigasEsprando(int numHormigasEsprando) {
+        this.numHormigasEsprando = numHormigasEsprando;
+    }
+
+    public int getNumHormigasZonaComer() {
+        return numHormigasZonaComer;
+    }
+
+    public void setNumHormigasZonaComer(int numHormigasZonaComer) {
+        this.numHormigasZonaComer = numHormigasZonaComer;
+    }
+
+    public boolean isHormigaEsperandoAlimento() {
+        return hormigaEsperandoAlimento;
+    }
+
+    public void setHormigaEsperandoAlimento(boolean hormigaEsperandoAlimento) {
+        this.hormigaEsperandoAlimento = hormigaEsperandoAlimento;
+    }
+
+    public ListaThreads getUnidadesElementosComida() {
+        return unidadesElementosComida;
+    }
+
+    public void setUnidadesElementosComida(ListaThreads unidadesElementosComida) {
+        this.unidadesElementosComida = unidadesElementosComida;
     }
 
     public ListaThreads getListaHormigasZonaComer() {
         return listaHormigasZonaComer;
     }
 
-    public ListaThreads getUnidadesElementosComida(){
-        return unidadesElementosComida;
-    }
-
-    public synchronized int getNumHormigasEsprando() {
-        return numHormigasEsprando;
-    }
-
-    public synchronized void setNumHormigasEsprando(int numHormigasEsprando) {
-        this.numHormigasEsprando = numHormigasEsprando;
+    public void setListaHormigasZonaComer(ListaThreads listaHormigasZonaComer) {
+        this.listaHormigasZonaComer = listaHormigasZonaComer;
     }
 }
