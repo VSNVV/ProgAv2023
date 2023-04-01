@@ -38,22 +38,23 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2NNnd43zGJJPKHO4PalVWPCmsWE" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  }
-}</component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\victorsanavia\Documents\Repositorios git\ProgAv2023\PECL\src\main\java\concurrencia" />
@@ -98,10 +99,39 @@
       <workItem from="1680130066292" duration="2113000" />
       <workItem from="1680164290353" duration="2229000" />
       <workItem from="1680167158837" duration="657000" />
+      <workItem from="1680182559637" duration="538000" />
+      <workItem from="1680183116009" duration="10097000" />
+      <workItem from="1680257801176" duration="10122000" />
+      <workItem from="1680288978832" duration="3822000" />
+      <workItem from="1680299863216" duration="3985000" />
+      <workItem from="1680348793794" duration="16155000" />
+      <workItem from="1680369758744" duration="5040000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <condition expression="hormiga.getTipo().equals(&quot;Obrera&quot;)" language="JAVA" />
+          <url>file://$PROJECT_DIR$/src/main/java/concurrencia/Colonia.java</url>
+          <line>155</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="concurrencia.ListaThreads" memberName="tf" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="this.numHormigasDentro" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
