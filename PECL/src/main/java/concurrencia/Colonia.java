@@ -135,6 +135,11 @@ public class Colonia { //Recurso compartido por todos los hilos
 
                 }
                 //Una vez finalizada la invasion, las hormigas se irán de la invasión
+                if((getNumHormigasEnInvasion() - 1) == 0){
+                    //Se verifica que es la ultima hormiga que queda, por tanto pondrá la invasion a false
+                    setInvasionEnCurso(false);
+                    setInvasionInsecto(false);
+                }
                 setNumHormigasEnInvasion(getNumHormigasEnInvasion() - 1);
                 //Una vez que se han ido, se saldrán del JTextField de invasion
                 getListaHormigasInvasor().sacarHormiga(hormiga);
@@ -149,8 +154,9 @@ public class Colonia { //Recurso compartido por todos los hilos
     //Método auxiliar a la invasion, para comprobar si hay una invasion o no a las hormigas que entran nuevas
     public void compruebaInvasion(Hormiga hormiga){
         cerrojoInvasion.lock();
+        String tipo = hormiga.getTipo();
         try{
-            if((isInvasionInsecto() && !isInvasionEnCurso()) && (hormiga.getTipo() != "Obrera")){
+            if((isInvasionInsecto() && !isInvasionEnCurso()) && (tipo.equals("Soldada") || tipo.equals("Cria"))){
                 //Se tiene que ir a la invasion, lanzaremos un InterruptedException
                 {
                     if(hormiga.getTipo().equals("Soldada")){
@@ -174,7 +180,7 @@ public class Colonia { //Recurso compartido por todos los hilos
             //ZonaComer
             if(getZonaComer().getListaHormigasZonaComer().getListaHormigas().contains(hormiga)){
                 //Está en ZonaComer, por tanto deberán salir del almacen
-                getZonaComer().saleZonaComer(hormiga);
+                getZonaComer().sale(hormiga);
             }
             else if(getZonaInstruccion().getListaHormigasHaciendoInstruccion().getListaHormigas().contains(hormiga)){
                 //Está haciendo instruccion, por tanto se va de ZonaInstruccion
@@ -224,7 +230,14 @@ public class Colonia { //Recurso compartido por todos los hilos
         return invasionInsecto;
     }
     public void setInvasionInsecto(boolean invasionInsecto) {
-        this.invasionInsecto = invasionInsecto;
+        cerrojoInvasion.lock();
+        try{
+            this.invasionInsecto = invasionInsecto;
+        }
+        finally {
+            cerrojoInvasion.unlock();
+        }
+
     }
     public boolean isInvasionEnCurso() {
         return invasionEnCurso;
