@@ -1,6 +1,7 @@
 package concurrencia;
 
 import javax.swing.*;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,9 +12,9 @@ public class AlmacenComida {
     private int numElementosComida = 0;
     private int numHormigasDentro = 0;
     private int numHormigasEsperando = 0;
-    private Lock entradaSalida = new ReentrantLock(), unidadComida = new ReentrantLock();
-    private Condition colaEspera = entradaSalida.newCondition(), esperaElementoComida = unidadComida.newCondition();
-    private boolean hormigaEsperandoElementoComida;
+    private Semaphore semaforoEntradaSalida = new Semaphore(10);
+    private Lock recogeElemento = new ReentrantLock(), depositaElemento = new ReentrantLock(), cerrojoNumElementosComida = new ReentrantLock(), cerrojoHormigaEsperando = new ReentrantLock();
+    private Condition conditionElementoComida = recogeElemento.newCondition();
     private ListaThreads unidadesElementosComida, listaHormigasAlmacenComida;
 
     //Métodos de la clase AlmacenComida
@@ -26,91 +27,126 @@ public class AlmacenComida {
     }
 
     //Método para entrar al almacen de comida
-    public void entraAlmacen(Hormiga hormiga){
-        entradaSalida.lock();
+    public void entra(Hormiga hormiga){
         try{
-            //Primero debemos comprobar que hay sitio, como máximo pueden haber 10 hormigas
-            if (getNumHormigasDentro() == 10){
-                //Se verifica que no hay hueco, por tanto tendrá que esperar
-                try{
-                    colaEspera.await();
-                    //Una vez que se le despierta al hilo, podrá entrar
-                }catch(InterruptedException ie){}
-            }
-            //Añadimos a la hormiga al JTextField de hormigas en almacen
+            semaforoEntradaSalida.acquire();
+            incrementaNumHormigasDentro();
             getListaHormigasAlmacenComida().meterHormiga(hormiga);
-            //Incrementamos en 1 el numero de hormigas en el almacen
-            setNumHormigasDentro(getNumHormigasDentro() + 1);
-            getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha entrado al almacen de comida.");
-        }finally{
-            entradaSalida.unlock();
-        }
+            getLog().escribirEnLog("[ALMACEN COMIDA} --> La hormiga " + hormiga.getIdentificador() + " ha entrado al almacen de comida");
+        }catch(InterruptedException ignored){}
     }
 
     //Método para salir del almacen de comida
-    public void saleAlmacen(Hormiga hormiga){
-        entradaSalida.lock();
-        try{
-            //Antes de salir, debemos dar un signal a la siguiente hormiga que quiera entrar al almacen
-            colaEspera.signal();
-            //Para salir del almacen, eliminamos a la hormiga del JTextField del almacen de comida
-            getListaHormigasAlmacenComida().sacarHormiga(hormiga);
-            //Decrementamos en 1 el numero de hormigas que hay dentro del almacén
-            setNumHormigasDentro(getNumHormigasDentro() - 1);
-            //Una vez que hayamos decrementado el valor, podremos salir del almacen
-            getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha salido del almacen de comida");
-        }finally{
-            entradaSalida.unlock();
-        }
+    public void sale(Hormiga hormiga){
+        decrementaNumHormigasDentro();
+        getListaHormigasAlmacenComida().sacarHormiga(hormiga);
+        getLog().escribirEnLog("[ALMACEN COMIDA} --> La hormiga " + hormiga.getIdentificador() + " ha salido del almacen de comida");
+        semaforoEntradaSalida.release();
     }
 
-    //Método para depositar un elemento de comida en el almacen
-    public void depositaElementoComida(Hormiga hormiga){
-        unidadComida.lock();
+    //Método para realizar una operación sobre la variable de numero de elementos de comida
+
+
+    //Método para que una hormiga deposite un elemento de comida
+    public synchronized void depositaElementoComida(Hormiga hormiga){
+        recogeElemento.lock();
         try{
-            //Una vez transcurrido el tiempo, añadimos el elemento de comida
-            setNumElementosComida(getNumElementosComida() + 1);
-            //Una vez que se ha añadido, actualizamos el valor en el JTextField
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
-            getLog().escribirEnLog("[Almacen Comida] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida");
-            //Una vez que han dejado un elemento de comida, despertarán a una hormiga en caso de que esté esperando un elemento de comida
-            if(getNumHormigasEsperando() > 0){
-                //Se verifica que hay una hormiga esperando comida, por tanto tenemos que dar signal
-                esperaElementoComida.signal();
+            setNumElementosComida(getNumElementosComida() + 1); //Primero depositamos
+            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en el almacen de comida");
+            if(getNumHormigasEsperando() > 0){ //Mirar si hay hormigas esperando elementos de comida
+                //Verificamos que hay hormigas esperando
+                conditionElementoComida.signal(); //Despierta a la hormiga porque ya hay un elemento de comida presente
             }
+            //Si no hay hormigas esperando, no tiene sentido dar signal, ya que no despertaría a nadie
         }
         finally{
-            unidadComida.unlock();
+            recogeElemento.unlock();
         }
     }
 
-    //Método para recoger un elemento de comida
+    //Método para que una hormiga recoja un elemento de comida
     public void recogeElementoComida(Hormiga hormiga){
-        unidadComida.lock();
+        recogeElemento.lock();
         try{
-            //Cuando entran a recoger la comida, primero tenemos que ver si podemos recogerla o no
-            if((getNumElementosComida() - 1) < 0){
-                //Verificamos que no se puede coger, por tanto tendremos que esperar
-                setNumHormigasEsperando(getNumHormigasEsperando() + 1); //Incrementamos el numero de hormigas esperando
-                esperaElementoComida.await();
+            //Primero debemos ver si nos tenemos que dormir o no
+            if((getNumElementosComida() <= 0) || (getNumHormigasEsperando() > 0)){ //Si no hay elementos de comida o hay hormigas esperando
+                setNumHormigasEsperando(getNumHormigasEsperando() + 1); //Incrementamos en 1 el numero de hormigas esperando
+                conditionElementoComida.await();
+                setNumHormigasEsperando(getNumHormigasEsperando() - 1); //Decrementamos en 1 el numero de hormigas esperando
             }
-            //Se verifica que hay un elemento de comida para recoger, por tanto, lo cogeremos
-            setNumElementosComida(getNumElementosComida() - 1);
-            //Actualizamos el JTextField
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
-            //Escribimos el evento en el log
-            getLog().escribirEnLog("[Almacen Comida] La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida del almacen");
-
-        } catch (InterruptedException ignored) {}
+            setNumElementosComida(getNumElementosComida() - 1); //Recogemos un elemento de comida
+            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida del almacen de comida");
+        }
+        catch (InterruptedException ignored){}
         finally{
-            unidadComida.unlock();
+            recogeElemento.unlock();
         }
     }
 
-    //Métodos get y set
-    public Log getLog(){
-        return this.log;
+
+
+    //MÉTODOS GET Y SET
+
+    //Enteros del aforo del almacén de comida
+    public int getNumHormigasDentro() {
+        return numHormigasDentro;
     }
+    public void setNumHormigasDentro(int numHormigasDentro) {
+        this.numHormigasDentro = numHormigasDentro;
+    }
+
+    public void incrementaNumHormigasDentro(){
+        numHormigasDentro = numHormigasDentro + 1;
+    }
+
+    public void decrementaNumHormigasDentro(){
+        numHormigasDentro = numHormigasDentro - 1;
+    }
+
+    //Variables para realizar lectura y escritua en el numero de elementos de comida en el almacén
+    public int getNumElementosComida(){
+        cerrojoNumElementosComida.lock();
+        try{
+            return numElementosComida;
+        }
+        finally{
+            cerrojoNumElementosComida.unlock();
+        }
+    } //Lectura
+    public void setNumElementosComida(int numElementosComida){
+        cerrojoNumElementosComida.lock();
+        try{
+            this.numElementosComida = numElementosComida;
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
+        }
+        finally{
+            cerrojoNumElementosComida.unlock();
+        }
+
+    } //Escritura
+
+    //Métodos para realizar lectura y escritura sobre el numero de hormigas esperando
+    public int getNumHormigasEsperando(){
+        cerrojoHormigaEsperando.lock();
+        try{
+            return numHormigasEsperando;
+        }
+        finally{
+            cerrojoHormigaEsperando.unlock();
+        }
+
+    } //Lectura
+    public void setNumHormigasEsperando(int numHormigasEsperando){
+        cerrojoHormigaEsperando.lock();
+        try{
+            this.numHormigasEsperando = numHormigasEsperando;
+        }
+        finally{
+            cerrojoHormigaEsperando.unlock();
+        }
+    } //Escritura
+
+    //Métodos get de los ListaThreads
     public ListaThreads getUnidadesElementosComida() {
         return unidadesElementosComida;
     }
@@ -118,22 +154,8 @@ public class AlmacenComida {
         return listaHormigasAlmacenComida;
     }
 
-    public int getNumHormigasDentro(){
-        return this.numHormigasDentro;
-    }
-    public void setNumHormigasDentro(int numHormigasDentro){
-        this.numHormigasDentro = numHormigasDentro;
-    }
-    public synchronized int getNumElementosComida(){
-        return this.numElementosComida;
-    }
-    public synchronized void setNumElementosComida(int numElementosComida){
-        this.numElementosComida = numElementosComida;
-    }
-    public int getNumHormigasEsperando() {
-        return numHormigasEsperando;
-    }
-    public void setNumHormigasEsperando(int numHormigasEsperando) {
-        this.numHormigasEsperando = numHormigasEsperando;
+    //Método get del log
+    public Log getLog() {
+        return log;
     }
 }
