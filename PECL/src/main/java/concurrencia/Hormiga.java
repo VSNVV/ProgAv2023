@@ -7,6 +7,7 @@ public class Hormiga extends Thread{
     private String tipo;
     private Colonia colonia;
     private Log log;
+    private boolean invasion = false, refugio = false;
 
     //Métodos de la clase Hormiga
 
@@ -32,7 +33,6 @@ public class Hormiga extends Thread{
 
     //Método run
     public void run(){
-        getColonia().compruebaInvasion(this);
         //Todas las hormigas, sin distinción, tienen que entrar a la colonia
         getColonia().entraColonia(this);
         //Según el tipo de hormiga, esta tendrá una rutina u otra
@@ -91,6 +91,7 @@ public class Hormiga extends Thread{
             while (true){
                 try{
                     //Verificamos que la hormiga es de tipo soldada
+
                     //Una vez dentro de la colonia, se irán a la zona de instrucción
                     getColonia().getZonaInstruccion().entraZonaInstruccion(this);
                     //Una vez dentro de la zona de instruccion, hacen entre 2 y 8 segundos de instruccion
@@ -117,8 +118,9 @@ public class Hormiga extends Thread{
                         getColonia().getZonaComer().sale(this);
                     }
                 }catch(InterruptedException ie){
+                    getColonia().actualizaEstadoInvasion(this);
                     //Código de la invasion
-                    getColonia().invasion(this);
+                    getColonia().getInvasion().realizaInvasion(this);
                 }
             }
         }
@@ -143,17 +145,12 @@ public class Hormiga extends Thread{
                 catch(InterruptedException ie){
                     //Código de refugio (ya que son crias)
                     getColonia().actualizaEstadoInvasion(this);
-                    //Entran al refugio
-                    getColonia().getRefugio().entraRefugio(this);
-                    //Una vez dentro del refugio espera al fin de la invasion
-                    getColonia().getRefugio().esperaFinInvasion(this);
-                    //Una vez que la invasion haya terminado, podrá salir del refugio, empezando de 0 su actividad
-                    getColonia().getRefugio().saleRefugio(this);
+                    //Se protegen en el refugio
+                    getColonia().getRefugio().protegeRefugio(this);
                 }
             }
         }
     }
-
 
     //Métodos get y set
     public String getIdentificador(){
