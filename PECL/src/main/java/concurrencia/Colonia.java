@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
-    private int numHormigasSoldado = 0, numHormigasEnInvasion = 0;
+    private int numHormigasSoldado = 0;
     private boolean invasionInsecto = false, invasionEnCurso = false;
     private Log log; //Log del sistema concurrente
     private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
@@ -19,7 +19,6 @@ public class Colonia { //Recurso compartido por todos los hilos
     private Lock cerrojoInvasion = new ReentrantLock(); //Lock de la invasion del insecto
     private Condition hormigasEsperandoInvasion = cerrojoInvasion.newCondition();
     private ArrayList<Hormiga> listaHormigas = new ArrayList<Hormiga>();
-    private ListaThreads listaHormigasInvasor; //ListaThreads para manejar el JTextField de la invasion
     private ListaThreads listaHormigasBuscandoComida; //ListaThreads para manejar el JTextField de hormigas buscando comida
     private ListaThreads listaHormigasLlevandoComida; //ListaThreads para manejar el JTextField de hormigas llevando comida
     private AlmacenComida almacenComida; //Almacen de comida de la colonia
@@ -27,6 +26,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     private ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
     private ZonaDescanso zonaDescanso; //Zona de descanso de la colonia
     private Refugio refugio;
+    private Invasion invasion;
 
     //Métodos de la clase colonia
 
@@ -38,7 +38,6 @@ public class Colonia { //Recurso compartido por todos los hilos
                    JTextField jTextFieldHormigasZonaComer, JTextField jTextFieldHormigasRefugio){
         this.log = log;
         this.listaHormigasBuscandoComida = new ListaThreads(jTextFieldHormigasBuscandoComida);
-        this.listaHormigasInvasor = new ListaThreads(jTextFieldHormigasContraInvasor);
         this.listaHormigasLlevandoComida = new ListaThreads(jTextFieldHormiasLlevandoComida);
         //Crear aqui todas las zonas, para luego en distribuida pasar un solo objeto que tenga toda la parte concurrente
         this.almacenComida = new AlmacenComida(log, jTextFieldUnidadesComidaAlmacen, jTextFieldHormigasAlmacenComida);
@@ -46,22 +45,27 @@ public class Colonia { //Recurso compartido por todos los hilos
         this.zonaInstruccion = new ZonaInstruccion(log, jTextFieldHormigasHaciendoInstruccion);
         this.zonaDescanso = new ZonaDescanso(log, jTextFieldHormigasDescansando);
         this.refugio = new Refugio(log, jTextFieldHormigasRefugio);
+        this.invasion = new Invasion(log, jTextFieldHormigasContraInvasor);
 
     }
 
     //Método para entrar a la colonia
     public void entraColonia(Hormiga hormiga){
         entradaColonia.lock();
-        try{
-            getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
-            //A todas las hormigas que entran les añadimos a un arraylist
-            getListaHormigas().add(hormiga);
-            if(hormiga.getTipo() == "Soldada"){
-                setNumHormigasSoldado(getNumHormigasSoldado() + 1);
-            }
-            //En el caso de que sea soldada u cria, tiene que mirar si hay una invasion
-
-        }finally{
+        getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
+        //A todas las hormigas que entran les añadimos a un arraylist
+        getListaHormigas().add(hormiga);
+        if(hormiga.getTipo().equals("Soldada")){
+            setNumHormigasSoldado(getNumHormigasSoldado() + 1);
+            entradaColonia.unlock();
+            getInvasion().realizaInvasion(hormiga); //Si la invasion no está activa este método serña inutil
+        }
+        else if(hormiga.getTipo().equals("Cria")){
+            entradaColonia.unlock();
+            getRefugio().protegeRefugio(hormiga);
+            //Si no está activo, esta función será inutil
+        }
+        else{
             entradaColonia.unlock();
         }
     }
@@ -105,74 +109,6 @@ public class Colonia { //Recurso compartido por todos los hilos
         getListaHormigasBuscandoComida().sacarHormiga(hormiga);
     }
 
-    //Método para comprobar su hay una invasion
-    public void invasion(Hormiga hormiga){
-        actualizaEstadoInvasion(hormiga);
-        cerrojoInvasion.lock();
-        try{
-            if ((isInvasionInsecto() && (!isInvasionEnCurso()))){
-                //Se verica que hay una invasion activa y que la invasion no esta en curso, por tanto se puede unir
-                //Una hormiga se suma a la invasión, por tanto incrementamos el numero de hormigas en la invasion
-                setNumHormigasEnInvasion(getNumHormigasEnInvasion() + 1);
-                //Una vez añadida a la invasion, la metemos en el JTextField
-                getListaHormigasInvasor().meterHormiga(hormiga);
-                //En primer lugar, tenemos que ver si es la ultima hormiga que queda
-                if((getNumHormigasEnInvasion()) != (getNumHormigasSoldado())){
-                    //Verificamos no es la úlitma, por tanto se dormirá
-                    hormigasEsperandoInvasion.await();
-                }
-                else{
-                    //Se verifica que es la última, por tanto salen a la invasion
-                    setInvasionEnCurso(true);
-                    //poner booleano para que otras hormigas no se puedan meter durante una invasión
-                    getLog().escribirEnLog("[Invasion] --> Las hormigas estan repeliendo al insecto invasor");
-                    //La invasion dura 20 segundos
-                    Thread.sleep(20000);
-                    //Una vez finalizada la invasión, despertamos a todos los hilos y escribimos el evento en el log
-                    getLog().escribirEnLog("[Invasion] --> La invasion ha terminado, el insecto invasor ha huido");
-                    hormigasEsperandoInvasion.signalAll();
-                    getRefugio().indicaFinInvasion();
-
-                }
-                //Una vez finalizada la invasion, las hormigas se irán de la invasión
-                if((getNumHormigasEnInvasion() - 1) == 0){
-                    //Se verifica que es la ultima hormiga que queda, por tanto pondrá la invasion a false
-                    setInvasionEnCurso(false);
-                    setInvasionInsecto(false);
-                }
-                setNumHormigasEnInvasion(getNumHormigasEnInvasion() - 1);
-                //Una vez que se han ido, se saldrán del JTextField de invasion
-                getListaHormigasInvasor().sacarHormiga(hormiga);
-            }
-        }
-        catch(InterruptedException ignored){}
-        finally{
-            cerrojoInvasion.unlock();
-        }
-    }
-
-    //Método auxiliar a la invasion, para comprobar si hay una invasion o no a las hormigas que entran nuevas
-    public void compruebaInvasion(Hormiga hormiga){
-        cerrojoInvasion.lock();
-        String tipo = hormiga.getTipo();
-        try{
-            if((isInvasionInsecto() && !isInvasionEnCurso()) && (tipo.equals("Soldada") || tipo.equals("Cria"))){
-                //Se tiene que ir a la invasion, lanzaremos un InterruptedException
-                {
-                    if(hormiga.getTipo().equals("Soldada")){
-                        invasion(hormiga);
-                    }
-                    else{
-                        getRefugio().entraRefugio(hormiga);
-                    }
-                }
-            }
-        }
-        finally{
-            cerrojoInvasion.unlock();
-        }
-    }
-
     //Método auxiliar a la invasion
     public synchronized void actualizaEstadoInvasion(Hormiga hormiga){
         try{
@@ -213,8 +149,8 @@ public class Colonia { //Recurso compartido por todos los hilos
     public Refugio getRefugio(){
         return this.refugio;
     }
-    public ListaThreads getListaHormigasInvasor() {
-        return listaHormigasInvasor;
+    public Invasion getInvasion(){
+        return this.invasion;
     }
     public ListaThreads getListaHormigasBuscandoComida() {
         return listaHormigasBuscandoComida;
@@ -226,36 +162,11 @@ public class Colonia { //Recurso compartido por todos los hilos
         return listaHormigas;
     }
 
-    public boolean isInvasionInsecto() {
-        return invasionInsecto;
-    }
-    public void setInvasionInsecto(boolean invasionInsecto) {
-        cerrojoInvasion.lock();
-        try{
-            this.invasionInsecto = invasionInsecto;
-        }
-        finally {
-            cerrojoInvasion.unlock();
-        }
-
-    }
-    public boolean isInvasionEnCurso() {
-        return invasionEnCurso;
-    }
-    public void setInvasionEnCurso(boolean invasionEnCurso) {
-        this.invasionEnCurso = invasionEnCurso;
-    }
-
-    public synchronized int getNumHormigasSoldado() {
+    public int getNumHormigasSoldado() {
         return numHormigasSoldado;
     }
-    public synchronized void setNumHormigasSoldado(int numHormigasSoldado) {
+    public void setNumHormigasSoldado(int numHormigasSoldado) {
         this.numHormigasSoldado = numHormigasSoldado;
     }
-    public synchronized int getNumHormigasEnInvasion() {
-        return numHormigasEnInvasion;
-    }
-    public synchronized void setNumHormigasEnInvasion(int numHormigasEnInvasion) {
-        this.numHormigasEnInvasion = numHormigasEnInvasion;
-    }
+
 }
