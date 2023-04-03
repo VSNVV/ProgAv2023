@@ -51,7 +51,7 @@ public class AlmacenComida {
     public synchronized void depositaElementoComida(Hormiga hormiga){
         recogeElemento.lock();
         try{
-            setNumElementosComida(getNumElementosComida() + 1); //Primero depositamos
+            setNumElementosComida(getNumElementosComida() + 5); //Primero depositamos
             getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en el almacen de comida");
             if(getNumHormigasEsperando() > 0){ //Mirar si hay hormigas esperando elementos de comida
                 //Verificamos que hay hormigas esperando
@@ -74,7 +74,7 @@ public class AlmacenComida {
                 conditionElementoComida.await();
                 setNumHormigasEsperando(getNumHormigasEsperando() - 1); //Decrementamos en 1 el numero de hormigas esperando
             }
-            setNumElementosComida(getNumElementosComida() - 1); //Recogemos un elemento de comida
+            setNumElementosComida(getNumElementosComida() - 5); //Recogemos un elemento de comida
             getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida del almacen de comida");
         }
         catch (InterruptedException ignored){}
