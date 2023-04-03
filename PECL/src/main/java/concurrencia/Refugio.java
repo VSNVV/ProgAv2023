@@ -9,6 +9,7 @@ public class Refugio {
     //Atributos de la clase Refugio
     private Log log; //Log del sistema concurrente
     private boolean activo = false;
+    private int numHormigasRefugio = 0;
     private Lock cerrojoRefugio = new ReentrantLock();
     private Condition finInvasion = cerrojoRefugio.newCondition(); //Condition para que las hormigas esperen al fin de la invasion
     private ListaThreads listaHormigasRefugio; //ListaThreads para manejar el JTextField del refugio de la interfaz
@@ -26,13 +27,17 @@ public class Refugio {
         try{
             cerrojoRefugio.lock();
             if(isActivo()){
+                hormiga.getPaso().mirar();
                 entra(hormiga);
+                hormiga.getPaso().mirar();
                 try{
                     finInvasion.await();
+                    hormiga.getPaso().mirar();
                 }catch(InterruptedException ie){}
                 sale(hormiga);
             }
         }
+        catch(InterruptedException ie){}
         finally{
             cerrojoRefugio.unlock();
         }
@@ -42,6 +47,7 @@ public class Refugio {
     private void entra(Hormiga hormiga){
         //Añadimos a la hormiga a la lista del refugio
         getListaHormigasRefugio().meterHormiga(hormiga);
+        setNumHormigasRefugio(getNumHormigasRefugio() + 1);
         //Una vez que esta metida, escribimos el evento en el log
         getLog().escribirEnLog("[REFUGIO] --> La hormiga " + hormiga.getIdentificador() + " ha entrado al refugio");
     }
@@ -50,8 +56,12 @@ public class Refugio {
     private void sale(Hormiga hormiga){
         //Para salir, quitamos al hormiga del JTextField correspondiente
         getListaHormigasRefugio().sacarHormiga(hormiga);
+        setNumHormigasRefugio(getNumHormigasRefugio() - 1);
         //Una vez fuera del JTextField, escribimos el evento en el log
         getLog().escribirEnLog("[REFUGIO] --> La hormiga " + hormiga.getIdentificador() + " ha salido del refugio");
+        if(getNumHormigasRefugio() == 0){
+            setActivo(false);
+        }
     }
 
     //Método para despertar a las hormigas cria despues de la invasion
@@ -89,13 +99,15 @@ public class Refugio {
         this.activo = activo;
     }
 
-    public void indicaFinInvasion(){
-        cerrojoRefugio.lock();
-        try{
-            finInvasion.signalAll();
-        }
-        finally{
-            cerrojoRefugio.unlock();
-        }
+    public Lock getCerrojoRefugio() {
+        return cerrojoRefugio;
+    }
+
+    public int getNumHormigasRefugio() {
+        return numHormigasRefugio;
+    }
+
+    public void setNumHormigasRefugio(int numHormigasRefugio) {
+        this.numHormigasRefugio = numHormigasRefugio;
     }
 }
