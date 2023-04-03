@@ -56,7 +56,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             hormigaSoldado.start();
             identificadorSoldado = "";
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
-            getColonia().setNumHormigasSoldado(getNumHormigasSoldado());
+            //getColonia().setNumHormigasSoldado(getNumHormigasSoldado());
 
             //Creamos una hormiga cria
             fmt = new Formatter();
@@ -212,9 +212,11 @@ public class ProgPrincipal extends javax.swing.JFrame {
     private void jButtonGenerarAmenazaInsectoInvasorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
         // TODO add your handling code here:
         //Activaremos el booleano de invasion
-        if (!getColonia().isInvasionInsecto()){
-            getColonia().setInvasionInsecto(true);
-            //Una vez activada darmeos interrupt a todas las hormiga soldado que esten presentes en la colonia
+        if (!getColonia().getInvasion().isActiva()){
+            getColonia().getInvasion().setActiva(true);
+            getColonia().getRefugio().setActivo(true);
+            getLog().escribirEnLog("[INVASION] --> Se ha generado una invasion");
+            //Una vez activada darmeos interrupt a todas las hormiga soldado y crias que esten presentes en la colonia
             for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
                 Hormiga hormigaActual = getColonia().getListaHormigas().get(i);
                 String tipoHormiga = hormigaActual.getTipo();
