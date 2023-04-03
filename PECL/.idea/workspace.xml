@@ -48,6 +48,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -57,6 +59,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="V:\Proyectos de programacion\Repositorios Git\ProgAv2023\ProgAv2023\PECL\src\main\java\concurrencia" />
       <recent name="C:\Users\victorsanavia\Documents\Repositorios git\ProgAv2023\PECL\src\main\java\concurrencia" />
     </key>
   </component>
@@ -106,6 +109,9 @@
       <workItem from="1680299863216" duration="3985000" />
       <workItem from="1680348793794" duration="16155000" />
       <workItem from="1680369758744" duration="5040000" />
+      <workItem from="1680450753934" duration="10491000" />
+      <workItem from="1680467402488" duration="236000" />
+      <workItem from="1680469546925" duration="8220000" />
     </task>
     <servers />
   </component>
@@ -113,25 +119,10 @@
     <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <condition expression="hormiga.getTipo().equals(&quot;Obrera&quot;)" language="JAVA" />
-          <url>file://$PROJECT_DIR$/src/main/java/concurrencia/Colonia.java</url>
-          <line>155</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="concurrencia.ListaThreads" memberName="tf" />
       </pinned-members>
     </pin-to-top-manager>
-    <watches-manager>
-      <configuration name="Application">
-        <watch expression="this.numHormigasDentro" language="JAVA" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>
