@@ -2,19 +2,19 @@ package concurrencia;
 
 import javax.swing.*;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ZonaComer {
     //Atrubutos de la clase ZonaComer
     private Log log;
     private Semaphore semaforoEntradaSalida = new Semaphore(1, true); //Semáforo para entrar y salir
-    private Semaphore semaforoExclusionMutua = new Semaphore(1); //Semáforo para asegurar exclusion mutua a la hora de recoger y depositar
-    private Semaphore semaforoDepositar = new Semaphore(1); //Semaforo para depositar el elemento de comida
-    private Semaphore semaforoCoger = new Semaphore(0); //Semaforo para coger el elemento de comida
-
+    private Lock cerrojoElementoComida = new ReentrantLock();
+    private Condition esperaElementoComida = cerrojoElementoComida.newCondition();
     private int numElementosComida = 0, numHormigasEsprando = 0, numHormigasZonaComer = 0;
     private boolean hormigaEsperandoAlimento = false;
     private ListaThreads unidadesElementosComida, listaHormigasZonaComer;
-
 
     //Métodos de la clase ZonaComer
 
@@ -52,30 +52,29 @@ public class ZonaComer {
     //Método para depositar un elemento de comida
     public void depositaElementoComida(Hormiga hormiga){
         try{
-            semaforoDepositar.acquire();
-            semaforoExclusionMutua.acquire();
-            setNumElementosComida(getNumElementosComida() + 1); //Incrementamos el numero de elementos de comida
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida()); //Imprimimos el numero de elementos de comida
-            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en ZonaComer");
-        }catch(InterruptedException ie){}
+            cerrojoElementoComida.lock();
+            setNumElementosComida(getNumElementosComida() + 1); //Depositamos el elemento de comida
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida());
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en la zona para comer");
+            esperaElementoComida.signal(); //Como hemos depositado un elemento de comida despertamos por si hay una hormiga esperando el mismo
+        }
         finally{
-            semaforoExclusionMutua.release();
-            semaforoCoger.release();
+            cerrojoElementoComida.unlock();
         }
     }
 
     //Método para coger un elemento de comida
     public void cogeElementoComida(Hormiga hormiga) throws InterruptedException{
         try{
-            semaforoCoger.acquire();
-            semaforoExclusionMutua.acquire();
-            setNumElementosComida(getNumElementosComida() - 1); //Decrementamos el numero de elementos de comida
-            getUnidadesElementosComida().insertarNumero(getNumElementosComida()); //Imprimimos el numero de elementos de comida
-            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida en ZonaComer");
-        }
-        finally{
-            semaforoExclusionMutua.release();
-            semaforoDepositar.release();
+            cerrojoElementoComida.lock();
+            if(getNumElementosComida() <= 0){
+                esperaElementoComida.await(); //Si no hay elementos de comida, tendrá que esperar a que haya uno
+            }
+            setNumElementosComida(getNumElementosComida() - 1); //Cogemos el elemento de comida
+            getUnidadesElementosComida().insertarNumero(getNumElementosComida()); //Imprimios el numero de elementos de comida
+            getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha cogido un elemento de comida de la zona para comer");
+        }finally{
+            cerrojoElementoComida.unlock();
         }
     }
 
