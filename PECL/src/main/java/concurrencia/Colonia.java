@@ -27,6 +27,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     private ZonaDescanso zonaDescanso; //Zona de descanso de la colonia
     private Refugio refugio;
     private Invasion invasion;
+    private Paso paso;
 
     //Métodos de la clase colonia
 
@@ -46,17 +47,21 @@ public class Colonia { //Recurso compartido por todos los hilos
         this.zonaDescanso = new ZonaDescanso(log, jTextFieldHormigasDescansando);
         this.refugio = new Refugio(log, jTextFieldHormigasRefugio);
         this.invasion = new Invasion(log, jTextFieldHormigasContraInvasor);
+        this.paso = new Paso();
 
     }
 
     //Método para entrar a la colonia
     public void entraColonia(Hormiga hormiga){
         entradaColonia.lock();
-        getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
         //A todas las hormigas que entran les añadimos a un arraylist
         getListaHormigas().add(hormiga);
         if(hormiga.getTipo().equals("Soldada")){
+            try{
+                hormiga.getPaso().mirar();
+            }catch (InterruptedException ie){}
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
+            getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
             entradaColonia.unlock();
             getInvasion().realizaInvasion(hormiga); //Si la invasion no está activa este método serña inutil
         }
@@ -124,7 +129,7 @@ public class Colonia { //Recurso compartido por todos los hilos
             }
             else if(getZonaDescanso().getListaHormigasDescansando().getListaHormigas().contains(hormiga)){
                 //Está haciendo un descanso, por tanto saldrán del descanso
-                getZonaDescanso().saleZonaDescanso(hormiga);
+                getZonaDescanso().sale(hormiga);
             }
         }
         catch(InterruptedException ignored){}
@@ -152,6 +157,10 @@ public class Colonia { //Recurso compartido por todos los hilos
     public Invasion getInvasion(){
         return this.invasion;
     }
+    public Paso getPaso() {
+        return paso;
+    }
+
     public ListaThreads getListaHormigasBuscandoComida() {
         return listaHormigasBuscandoComida;
     }
@@ -162,6 +171,19 @@ public class Colonia { //Recurso compartido por todos los hilos
         return listaHormigas;
     }
 
+    public int cuentaSoldadas(){
+        int result = 0;
+        ArrayList<Hormiga> lista = getListaHormigas();
+        for(int i = 0; i < lista.size(); i++){
+            Hormiga hormigaActual = lista.get(i);
+            String tipo = hormigaActual.getTipo();
+            if(tipo.equals("Soldada")){
+                result = result + 1;
+            }
+        }
+        return result;
+    }
+
     public int getNumHormigasSoldado() {
         return numHormigasSoldado;
     }
@@ -169,4 +191,7 @@ public class Colonia { //Recurso compartido por todos los hilos
         this.numHormigasSoldado = numHormigasSoldado;
     }
 
+    public Lock getEntradaColonia() {
+        return entradaColonia;
+    }
 }
