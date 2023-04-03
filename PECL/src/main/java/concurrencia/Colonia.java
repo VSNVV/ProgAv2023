@@ -135,6 +135,23 @@ public class Colonia { //Recurso compartido por todos los hilos
         catch(InterruptedException ignored){}
     }
 
+    //Método para generar una invasion
+    public void generaInvasion(){
+        if (!getInvasion().isActiva() && !getRefugio().isActivo()){
+            getInvasion().setActiva(true);
+            getRefugio().setActivo(true);
+            getLog().escribirEnLog("[INVASION] --> Se ha generado una invasion");
+            //Una vez activada darmeos interrupt a todas las hormiga soldado y crias que esten presentes en la colonia
+            for(int i = 0; i < getListaHormigas().size() ; i++){
+                Hormiga hormigaActual = getListaHormigas().get(i);
+                String tipoHormiga = hormigaActual.getTipo();
+                if (tipoHormiga.equals("Soldada") || tipoHormiga.equals("Cria")){
+                    hormigaActual.interrupt();
+                }
+            }
+        }
+    }
+
     //Métodos get y set
     public Log getLog(){
         return this.log;
