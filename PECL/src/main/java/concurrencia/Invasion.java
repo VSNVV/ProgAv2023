@@ -27,33 +27,26 @@ public class Invasion {
         try{
             cerrojoInvasion.lock();
             if(isActiva() && (!isEnCurso())){
+                hormiga.getPaso().mirar();
                 entra(hormiga);
                 if(activarInvasionEnCurso(hormiga)){
                     setEnCurso(true); //Indicamos que la invasion está en curso
                     getLog().escribirEnLog("[INVASION] --> Las hormigas estan combatiendo al insecto invasor");
-                    try{
-                        cerrojoInvasion.unlock();
-                        Thread.sleep(20000);
-                        cerrojoInvasion.lock();
-                    }catch(InterruptedException ie){}
-                    setEnCurso(false); //La invasión no estará en curso
-                    setActiva(false); //La invasión dejara de estar activa
+                    cerrojoInvasion.unlock();
+                    Thread.sleep(20000);
+                    hormiga.getPaso().mirar();
+                    cerrojoInvasion.lock();
                     getLog().escribirEnLog("[INVASION] --> Las hormigas han vencido al insecto invasor");
                     conditionInvasion.signalAll(); //Despertamos a las hormigas soldadas
-                    hormiga.getColonia().getRefugio().despiertaRefugio(); //Despertamos a las crias pq ya ha terminado la invasion
+                    hormiga.getRefugio().despiertaRefugio(); //Despertamos a las crias pq ya ha terminado la invasion
                 }
                 else{
-                    try{
-                        conditionInvasion.await();
-                    }catch(InterruptedException ie){}
+                    conditionInvasion.await();
                 }
+                hormiga.getPaso().mirar();
                 sale(hormiga);
-
             }
-        }
-        finally{
-
-        }
+        }catch (InterruptedException ie){}
         cerrojoInvasion.unlock();
     }
 
@@ -66,10 +59,12 @@ public class Invasion {
 
     //Método para comprobar si la invasion deberia estar en curso o no
     private boolean activarInvasionEnCurso(Hormiga hormiga){
+        hormiga.getColonia().getEntradaColonia().lock();
         boolean result;
         int numHormigasInvasion = getNumHormigasSoldado();
-        int numHormigasSoldadoColonia = hormiga.getColonia().getNumHormigasSoldado();
+        int numHormigasSoldadoColonia = hormiga.getColonia().cuentaSoldadas();
         result = numHormigasInvasion == numHormigasSoldadoColonia;
+        hormiga.getColonia().getEntradaColonia().unlock();
 
         return result;
     }
@@ -78,6 +73,11 @@ public class Invasion {
         setNumHormigasSoldado(getNumHormigasSoldado() - 1); //Decrementamos el numero de hormigas soldado
         getListaHormigasInvasion().sacarHormiga(hormiga); //Quitamos el identificador de la hormiga del JTextField
         getLog().escribirEnLog("[INVASION] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la invasion");
+        if(getNumHormigasSoldado() == 0){
+            //Es la última hormiga en salir, por tanto la invasion queda finalizada
+            setEnCurso(false); //La invasión no estará en curso
+            setActiva(false); //La invasión dejara de estar activa
+        }
     }
 
 
@@ -114,5 +114,9 @@ public class Invasion {
 
     public ListaThreads getListaHormigasInvasion() {
         return listaHormigasInvasion;
+    }
+
+    public Lock getCerrojoInvasion() {
+        return cerrojoInvasion;
     }
 }
