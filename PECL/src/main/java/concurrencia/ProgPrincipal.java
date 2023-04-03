@@ -5,7 +5,12 @@
  */
 package concurrencia;
 
+import distribuida.GestorInterfaz;
+
 import javax.swing.*;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Formatter;
 import java.util.concurrent.locks.Lock;
 
@@ -32,8 +37,12 @@ public class ProgPrincipal extends javax.swing.JFrame {
                 getjTextFieldHormigasAlmacenComida(), getjTextFieldHormiasLlevandoComida(), getjTextFieldHormigasHaciendoInstruccion(),
                 getjTextFieldUnidadesComidaAlmacen(), getjTextFieldUnidadesComidaZonaComer(), getjTextFieldHormigasDescansando(),
                 getjTextFieldHormigasZonaComer(), getjTextFieldHormigasRefugio());
+
+        //Inicializamos el objeto remoto
+        creaObjetoRemoto();
     }
 
+    //Método que crea el sistema concurrente
     public void crearSistema(){
         //Creamos los hilos
         Formatter fmt;
@@ -74,6 +83,20 @@ public class ProgPrincipal extends javax.swing.JFrame {
                 Thread.sleep((int) (((Math.random() + 1) * 800) + (3500 - (800 * 2))));
             }catch(InterruptedException ie){}
             setNumTotalHormigas(getNumTotalHormigas() + 5);
+        }
+    }
+
+    //Método para crear el objeto remoto
+    public void creaObjetoRemoto(){
+        try{
+            GestorInterfaz objetoRemoto = new GestorInterfaz(getColonia());
+            Registry registry = LocateRegistry.createRegistry(1099);
+            Naming.rebind("//localhost/ObjetoColonia", objetoRemoto);
+            System.out.println("El objeto remoto ha sido creado");
+            getLog().escribirEnLog("[RMI] --> El objeto remoto ha sido creado");
+        }catch(Exception e){
+            System.out.println("Error --> " + e);
+            e.printStackTrace();
         }
     }
 
@@ -213,21 +236,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
 
     private void jButtonGenerarAmenazaInsectoInvasorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
         // TODO add your handling code here:
-        //Activaremos el booleano de invasion
-        if (!getColonia().getInvasion().isActiva() && !getColonia().getRefugio().isActivo()){
-            getColonia().getInvasion().setActiva(true);
-            getColonia().getRefugio().setActivo(true);
-            getLog().escribirEnLog("[INVASION] --> Se ha generado una invasion");
-            //Una vez activada darmeos interrupt a todas las hormiga soldado y crias que esten presentes en la colonia
-            for(int i = 0; i < getColonia().getListaHormigas().size() ; i++){
-                Hormiga hormigaActual = getColonia().getListaHormigas().get(i);
-                String tipoHormiga = hormigaActual.getTipo();
-                if (tipoHormiga.equals("Soldada") || tipoHormiga.equals("Cria")){
-                    hormigaActual.interrupt();
-                }
-            }
-        }
-        //Si ya hay una invasión activa, este botón es inútil
+        getColonia().generaInvasion();
     }//GEN-LAST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
 
     private void jButtonPausarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPausarReanudarActionPerformed
@@ -280,6 +289,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
                 main.setVisible(true);
             }
         });
+        //Creamos el sistema concurrente
         main.crearSistema();
     }
 
