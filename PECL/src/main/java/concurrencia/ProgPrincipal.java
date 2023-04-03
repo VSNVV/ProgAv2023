@@ -124,9 +124,9 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jLabelHormigasBuscandoComida.setBackground(new java.awt.Color(255, 255, 255));
         jLabelHormigasBuscandoComida.setText("Hormigas buscando comida");
         JPanelHormigasBuscandoComida.add(jLabelHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
-        JPanelHormigasBuscandoComida.add(jTextFieldHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 20, 1430, 60));
+        JPanelHormigasBuscandoComida.add(jTextFieldHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 20, 1250, 60));
 
-        jPanelPrincipal.add(JPanelHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1630, 90));
+        jPanelPrincipal.add(JPanelHormigasBuscandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1440, 90));
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -134,9 +134,9 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jLabelHormigasContraInvasor.setBackground(new java.awt.Color(255, 255, 255));
         jLabelHormigasContraInvasor.setText("Hormigas repeliendo un insecto invasor ");
         jPanel1.add(jLabelHormigasContraInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 10, -1, -1));
-        jPanel1.add(jTextFieldHormigasContraInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 1610, 120));
+        jPanel1.add(jTextFieldHormigasContraInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 1430, 120));
 
-        jPanelPrincipal.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 1630, 170));
+        jPanelPrincipal.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 1450, 170));
 
         jPanel2.setBackground(new java.awt.Color(153, 153, 153));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -149,17 +149,17 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jLabelHormigasAlmacenComida.setBackground(new java.awt.Color(255, 255, 255));
         jLabelHormigasAlmacenComida.setText("Hormigas en el Almacen de Comida");
         jPanel2.add(jLabelHormigasAlmacenComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
-        jPanel2.add(jTextFieldHormigasAlmacenComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 1380, 30));
+        jPanel2.add(jTextFieldHormigasAlmacenComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 1160, 30));
 
         jLabelHormigasLlevandoComida.setBackground(new java.awt.Color(0, 0, 0));
         jLabelHormigasLlevandoComida.setText("Hormigas llevando comida a la Zona para Comer");
         jPanel2.add(jLabelHormigasLlevandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, -1));
-        jPanel2.add(jTextFieldHormiasLlevandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 1320, 30));
+        jPanel2.add(jTextFieldHormiasLlevandoComida, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 1100, 30));
 
         jLabelHormigasHaciendoInstruccion.setBackground(new java.awt.Color(255, 255, 255));
         jLabelHormigasHaciendoInstruccion.setText("Hormigas haciendo Instruccion");
         jPanel2.add(jLabelHormigasHaciendoInstruccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
-        jPanel2.add(jTextFieldHormigasHaciendoInstruccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 1420, 30));
+        jPanel2.add(jTextFieldHormigasHaciendoInstruccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 1200, 30));
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Hormigas descansando");
@@ -202,9 +202,9 @@ public class ProgPrincipal extends javax.swing.JFrame {
         });
         jPanel2.add(jButtonGenerarAmenazaInsectoInvasor, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 440, 340, 40));
 
-        jPanelPrincipal.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 1630, 500));
+        jPanelPrincipal.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 1450, 500));
 
-        getContentPane().add(jPanelPrincipal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1650, 800));
+        getContentPane().add(jPanelPrincipal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1470, 800));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
