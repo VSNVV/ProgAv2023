@@ -53,10 +53,12 @@ public class ZonaComer {
     public void depositaElementoComida(Hormiga hormiga){
         try{
             cerrojoElementoComida.lock();
-            setNumElementosComida(getNumElementosComida() + 1); //Depositamos el elemento de comida
+            setNumElementosComida(getNumElementosComida() + 5); //Depositamos los 5 elementos de comida
             getUnidadesElementosComida().insertarNumero(getNumElementosComida());
             getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en la zona para comer");
-            esperaElementoComida.signal(); //Como hemos depositado un elemento de comida despertamos por si hay una hormiga esperando el mismo
+            for(int i = 0; i < 5; i++){
+                esperaElementoComida.signal(); //Como hemos depositado 5 elementos de comida, despertaremos a 5 hormigas para que puedan coger su comida
+            }
         }
         finally{
             cerrojoElementoComida.unlock();
