@@ -7,6 +7,7 @@ package concurrencia;
 
 import javax.swing.*;
 import java.util.Formatter;
+import java.util.concurrent.locks.Lock;
 
 /**
  *
@@ -17,6 +18,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
     private int numTotalHormigas = 0, numHormigasObreras = 0, numHormigasSoldado = 0, numHormigasCria = 0;
     private Log log;
     private Colonia colonia;
+    private boolean botonPausarPulsado = false;
 
     /**
      * Creates new form ProgPrincipal
@@ -212,7 +214,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
     private void jButtonGenerarAmenazaInsectoInvasorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarAmenazaInsectoInvasorActionPerformed
         // TODO add your handling code here:
         //Activaremos el booleano de invasion
-        if (!getColonia().getInvasion().isActiva()){
+        if (!getColonia().getInvasion().isActiva() && !getColonia().getRefugio().isActivo()){
             getColonia().getInvasion().setActiva(true);
             getColonia().getRefugio().setActivo(true);
             getLog().escribirEnLog("[INVASION] --> Se ha generado una invasion");
@@ -230,6 +232,19 @@ public class ProgPrincipal extends javax.swing.JFrame {
 
     private void jButtonPausarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPausarReanudarActionPerformed
         // TODO add your handling code here:
+        if(!isBotonPausarPulsado()){
+            //Si no se ha pulsado el boton
+            setBotonPausarPulsado(true); //Actualizamos el booleano a que se ha pulsado
+            getBotonPausarReanudar().setText("Reanudar"); //Ponemos el texto a Reanudar, ya que a próxima vez que se pulse el botón será para reanudar
+            getColonia().getPaso().cerrar(); //Cerramos el paso para que los hilos se detengan en él
+        }
+        else{
+            //Si ya se habia pulsado el boton previamente
+            setBotonPausarPulsado(false); //Cambiamos el estado para que la proxima vez que pulsemos sea para parar
+            getBotonPausarReanudar().setText("Pausar"); //Cambiamos el texto del boton a pausar, ya que la proxima vez que se pulse el boton será para pausar
+            getColonia().getPaso().abrir(); //Abrimos el paso para que los hilos puedan seguir su ejecucion
+        }
+
     }//GEN-LAST:event_jButtonPausarReanudarActionPerformed
 
     /**
@@ -340,6 +355,14 @@ public class ProgPrincipal extends javax.swing.JFrame {
         return this.jTextFieldHormigasZonaComer;
     }
 
+    public JButton getBotonPausarReanudar() {
+        return jButtonPausarReanudar;
+    }
+
+    public JButton getBotonGenerarInvasion(){
+        return jButtonGenerarAmenazaInsectoInvasor;
+    }
+
     public Log getLog(){
         return this.log;
     }
@@ -379,4 +402,14 @@ public class ProgPrincipal extends javax.swing.JFrame {
     public void setNumHormigasCria(int numHormigasCria){
         this.numHormigasCria = numHormigasCria;
     }
+
+    public void setBotonPausarPulsado(boolean botonPausarPulsado) {
+        this.botonPausarPulsado = botonPausarPulsado;
+    }
+
+    public boolean isBotonPausarPulsado() {
+        return botonPausarPulsado;
+    }
+
+
 }
