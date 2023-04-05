@@ -8,14 +8,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class AlmacenComida {
     //Atributos de AlmacenComida
-    private Log log;
+    private final Log log;
     private int numElementosComida = 0;
     private int numHormigasDentro = 0;
     private int numHormigasEsperando = 0;
-    private Semaphore semaforoEntradaSalida = new Semaphore(10);
-    private Lock recogeElemento = new ReentrantLock(), depositaElemento = new ReentrantLock(), cerrojoNumElementosComida = new ReentrantLock(), cerrojoHormigaEsperando = new ReentrantLock();
-    private Condition conditionElementoComida = recogeElemento.newCondition();
-    private ListaThreads unidadesElementosComida, listaHormigasAlmacenComida;
+    private final Semaphore semaforoEntradaSalida = new Semaphore(10);
+    private final Lock recogeElemento = new ReentrantLock();
+    private final Lock cerrojoNumElementosComida = new ReentrantLock();
+    private final Lock cerrojoHormigaEsperando = new ReentrantLock();
+    private final Condition conditionElementoComida = recogeElemento.newCondition();
+    private final ListaThreads unidadesElementosComida;
+    private final ListaThreads listaHormigasAlmacenComida;
 
     //Métodos de la clase AlmacenComida
 
@@ -85,15 +88,7 @@ public class AlmacenComida {
 
 
 
-    //MÉTODOS GET Y SET
-
-    //Enteros del aforo del almacén de comida
-    public int getNumHormigasDentro() {
-        return numHormigasDentro;
-    }
-    public void setNumHormigasDentro(int numHormigasDentro) {
-        this.numHormigasDentro = numHormigasDentro;
-    }
+    //Métodos get y set
 
     public void incrementaNumHormigasDentro(){
         numHormigasDentro = numHormigasDentro + 1;
