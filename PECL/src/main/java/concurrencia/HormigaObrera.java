@@ -1,7 +1,7 @@
 package concurrencia;
 
 public class HormigaObrera extends Hormiga{
-    //Atributos de la clae HormigaObrera
+    //Atributos de la clase HormigaObrera
     private final int numIdentificador;
 
 
@@ -13,7 +13,7 @@ public class HormigaObrera extends Hormiga{
     public void run(){
         try{
             getPaso().mirar(); //Instruccion para que los hilos revisen si deben quedar parados o no, y recordar donde se quedaron parados
-            getColonia().entraColonia(this); //La hormiga entra a la colonia, sea del tipo que sea
+            getColonia().entra(this); //La hormiga entra a la colonia, sea del tipo que sea
             while(true){
                 //Verificamos que la hormiga es de tipo obrera
                 //Las obreras con ID par tienen distinta rutina que las impares
@@ -58,14 +58,14 @@ public class HormigaObrera extends Hormiga{
 
     private void rutinaHormigaImpar() throws InterruptedException{
         getPaso().mirar();
-        getColonia().saleColonia(this);
+        getColonia().sale(this);
         getPaso().mirar();//Sale de la colonia
         getColonia().getListaHormigasBuscandoComida().meterHormiga(this); //Desde este momento está buscando comida
         Thread.sleep(4000); //Tarda 4 segundos en recogerlo
         getPaso().mirar();
         getColonia().getListaHormigasBuscandoComida().sacarHormiga(this); //Ya no esta buscando comida
         getPaso().mirar();
-        getColonia().entraColonia(this); //Vuelve a entrar a la colonia
+        getColonia().entra(this); //Vuelve a entrar a la colonia
         getPaso().mirar();
         getAlmacenComida().entra(this); //Entra al almacen de comida
         Thread.sleep((int) (((Math.random() + 1) * 2000) + (4000 - (2000 * 2)))); //Tarda entre 2 y 4 segundos en depositar
@@ -83,8 +83,8 @@ public class HormigaObrera extends Hormiga{
         //Una vez dentro cogera un elemento de comida
         getZonaComer().cogeElementoComida(this);
         getPaso().mirar();
-        Thread.sleep(3000);
-        getPaso().mirar();//Tarda 3 segundos en comer
+        Thread.sleep(3000); //Tarda 3 segundos en comer
+        getPaso().mirar();
         //Una vez que ha comido saldrá de la zona de comer
         getZonaComer().sale(this);
         getPaso().mirar();
@@ -99,7 +99,7 @@ public class HormigaObrera extends Hormiga{
         getPaso().mirar();
     }
 
-    private int getNumIdentificador(){
+    public int getNumIdentificador(){
         return this.numIdentificador;
     }
 }
