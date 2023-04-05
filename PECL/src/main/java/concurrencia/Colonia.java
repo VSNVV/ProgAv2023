@@ -1,33 +1,27 @@
 package concurrencia;
 
 import javax.swing.*;
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Colonia { //Recurso compartido por todos los hilos
     //Atributos de la clase Colonia
     private int numHormigasSoldado = 0;
-    private boolean invasionInsecto = false, invasionEnCurso = false;
-    private Log log; //Log del sistema concurrente
-    private Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
-    private Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
-    private Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
-    private Lock cerrojoBuscarComida = new ReentrantLock();
-    private Lock cerrojoInvasion = new ReentrantLock(); //Lock de la invasion del insecto
-    private Condition hormigasEsperandoInvasion = cerrojoInvasion.newCondition();
-    private ArrayList<Hormiga> listaHormigas = new ArrayList<Hormiga>();
-    private ListaThreads listaHormigasBuscandoComida; //ListaThreads para manejar el JTextField de hormigas buscando comida
-    private ListaThreads listaHormigasLlevandoComida; //ListaThreads para manejar el JTextField de hormigas llevando comida
-    private AlmacenComida almacenComida; //Almacen de comida de la colonia
-    private ZonaComer zonaComer; //Zona para comer de la colonia
-    private ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
-    private ZonaDescanso zonaDescanso; //Zona de descanso de la colonia
-    private Refugio refugio;
-    private Invasion invasion;
-    private Paso paso;
+    private final Log log; //Log del sistema concurrente
+    private final Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
+    private final Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
+    private final Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
+    private final ArrayList<Hormiga> listaHormigas = new ArrayList<>();
+    private final ListaThreads listaHormigasBuscandoComida; //ListaThreads para manejar el JTextField de hormigas buscando comida
+    private final ListaThreads listaHormigasLlevandoComida; //ListaThreads para manejar el JTextField de hormigas llevando comida
+    private final AlmacenComida almacenComida; //Almacen de comida de la colonia
+    private final ZonaComer zonaComer; //Zona para comer de la colonia
+    private final ZonaInstruccion zonaInstruccion; //Zona de instruccion de la colonia
+    private final ZonaDescanso zonaDescanso; //Zona de descanso de la colonia
+    private final Refugio refugio;
+    private final Invasion invasion;
+    private final Paso paso;
 
     //Métodos de la clase colonia
 
@@ -59,7 +53,7 @@ public class Colonia { //Recurso compartido por todos los hilos
         if(hormiga.getTipo().equals("Soldada")){
             try{
                 hormiga.getPaso().mirar();
-            }catch (InterruptedException ie){}
+            }catch (InterruptedException ignored){}
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
             getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
             entradaColonia.unlock();
@@ -95,23 +89,6 @@ public class Colonia { //Recurso compartido por todos los hilos
                 salidaColonia2.unlock();
             }
         }
-    }
-
-    //Método para buscar comida
-    public void buscaComida(Hormiga hormiga){
-        //En primer lugar, nos metemos al JTextField de buscando comida
-        getListaHormigasBuscandoComida().meterHormiga(hormiga);
-        //Una vez metidos, nos saldremos de la colonia
-        saleColonia(hormiga);
-        //Tardamos 4 segundos en buscar comida
-        try{
-            Thread.sleep(4000);
-        }
-        catch(InterruptedException ignored){}
-        //Una vez que ya hemos buscado comida volvemos a la colonia
-        entraColonia(hormiga);
-        //Una vez entra a la colonia, dejará de estar buscando comida
-        getListaHormigasBuscandoComida().sacarHormiga(hormiga);
     }
 
     //Método auxiliar a la invasion
@@ -186,19 +163,6 @@ public class Colonia { //Recurso compartido por todos los hilos
     }
     public ArrayList<Hormiga> getListaHormigas() {
         return listaHormigas;
-    }
-
-    public int cuentaSoldadas(){
-        int result = 0;
-        ArrayList<Hormiga> lista = getListaHormigas();
-        for(int i = 0; i < lista.size(); i++){
-            Hormiga hormigaActual = lista.get(i);
-            String tipo = hormigaActual.getTipo();
-            if(tipo.equals("Soldada")){
-                result = result + 1;
-            }
-        }
-        return result;
     }
 
     public int getNumHormigasSoldado() {
