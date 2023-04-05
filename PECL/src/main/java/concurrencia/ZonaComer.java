@@ -8,13 +8,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ZonaComer {
     //Atrubutos de la clase ZonaComer
-    private Log log;
-    private Semaphore semaforoEntradaSalida = new Semaphore(1, true); //Semáforo para entrar y salir
-    private Lock cerrojoElementoComida = new ReentrantLock();
-    private Condition esperaElementoComida = cerrojoElementoComida.newCondition();
-    private int numElementosComida = 0, numHormigasEsprando = 0, numHormigasZonaComer = 0;
-    private boolean hormigaEsperandoAlimento = false;
-    private ListaThreads unidadesElementosComida, listaHormigasZonaComer;
+    private final Log log;
+    private final Semaphore semaforoEntradaSalida = new Semaphore(1, true); //Semáforo para entrar y salir
+    private final Lock cerrojoElementoComida = new ReentrantLock();
+    private final Condition esperaElementoComida = cerrojoElementoComida.newCondition();
+    private int numElementosComida = 0, numHormigasZonaComer = 0;
+    private final ListaThreads unidadesElementosComida;
+    private final ListaThreads listaHormigasZonaComer;
 
     //Métodos de la clase ZonaComer
 
@@ -34,19 +34,18 @@ public class ZonaComer {
             getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la zona para comer");
             semaforoEntradaSalida.release();
         }
-        catch(InterruptedException ie){}
+        catch(InterruptedException ignored){}
     }
 
     //Método para salir de la zona para comer
     public void sale(Hormiga hormiga){
         try{
             semaforoEntradaSalida.acquire();
-            setNumHormigasZonaComer(getNumHormigasEsprando() - 1); //Decrementamos el numero de hormigas en la lista de hormigas
             getListaHormigasZonaComer().sacarHormiga(hormiga); //Nos quitamos de la lista
             getLog().escribirEnLog("[ZONA COMER] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la zona para comer"); //Escribimos el evento en el log
             semaforoEntradaSalida.release();
         }
-        catch(InterruptedException ie){}
+        catch(InterruptedException ignored){}
     }
 
     //Método para depositar un elemento de comida
@@ -80,23 +79,6 @@ public class ZonaComer {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //Métodos get y set
 
     public Log getLog() {
@@ -111,14 +93,6 @@ public class ZonaComer {
         this.numElementosComida = numElementosComida;
     }
 
-    public int getNumHormigasEsprando() {
-        return numHormigasEsprando;
-    }
-
-    public void setNumHormigasEsprando(int numHormigasEsprando) {
-        this.numHormigasEsprando = numHormigasEsprando;
-    }
-
     public int getNumHormigasZonaComer() {
         return numHormigasZonaComer;
     }
@@ -127,27 +101,11 @@ public class ZonaComer {
         this.numHormigasZonaComer = numHormigasZonaComer;
     }
 
-    public boolean isHormigaEsperandoAlimento() {
-        return hormigaEsperandoAlimento;
-    }
-
-    public void setHormigaEsperandoAlimento(boolean hormigaEsperandoAlimento) {
-        this.hormigaEsperandoAlimento = hormigaEsperandoAlimento;
-    }
-
     public ListaThreads getUnidadesElementosComida() {
         return unidadesElementosComida;
     }
 
-    public void setUnidadesElementosComida(ListaThreads unidadesElementosComida) {
-        this.unidadesElementosComida = unidadesElementosComida;
-    }
-
     public ListaThreads getListaHormigasZonaComer() {
         return listaHormigasZonaComer;
-    }
-
-    public void setListaHormigasZonaComer(ListaThreads listaHormigasZonaComer) {
-        this.listaHormigasZonaComer = listaHormigasZonaComer;
     }
 }
