@@ -51,7 +51,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
                 fmt = new Formatter();
                 fmt.format("%05d", getNumHormigasObreras());
                 String identificadorObrera = "HO" + fmt;
-                Hormiga hormigaObrera = new Hormiga(getColonia(), getLog(), identificadorObrera, getNumHormigasObreras());
+                HormigaObrera hormigaObrera = new HormigaObrera(getColonia(), identificadorObrera, getNumHormigasObreras());
                 hormigaObrera.setName(identificadorObrera);
                 hormigaObrera.start();
                 identificadorObrera = null;
@@ -62,7 +62,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             fmt = new Formatter();
             fmt.format("%05d", getNumHormigasSoldado());
             String identificadorSoldado = "HS" + fmt;
-            Hormiga hormigaSoldado = new Hormiga(getColonia(), getLog(), identificadorSoldado, getNumHormigasSoldado());
+            HormigaSoldado hormigaSoldado = new HormigaSoldado(getColonia(), identificadorSoldado);
             hormigaSoldado.setName(identificadorSoldado);
             hormigaSoldado.start();
             identificadorSoldado = "";
@@ -73,7 +73,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             fmt = new Formatter();
             fmt.format("%05d", getNumHormigasCria());
             String identificadorCria = "HC" + fmt;
-            Hormiga hormigaCria = new Hormiga(getColonia(), getLog(), identificadorCria, getNumHormigasCria());
+            HormigaCria hormigaCria = new HormigaCria(getColonia(), identificadorCria);
             hormigaCria.setName(identificadorCria);
             hormigaCria.start();
             identificadorCria = null;
