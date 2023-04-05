@@ -30,7 +30,17 @@ public class AlmacenComida {
     }
 
     //Método para entrar al almacen de comida
-    public void entra(Hormiga hormiga){
+    public void entra(HormigaObrera hormiga){
+        recogeElemento.lock();
+        if(hormiga.getNumIdentificador() % 2 == 0){
+            if((getNumHormigasEsperando() > 0) || (getNumElementosComida() <= 0)){
+                try{
+                    setNumHormigasEsperando(getNumHormigasEsperando() + 1);
+                    conditionElementoComida.await();
+                }catch(InterruptedException ignored){}
+            }
+        }
+        recogeElemento.unlock();
         try{
             semaforoEntradaSalida.acquire();
             incrementaNumHormigasDentro();
@@ -40,25 +50,23 @@ public class AlmacenComida {
     }
 
     //Método para salir del almacen de comida
-    public void sale(Hormiga hormiga){
+    public void sale(HormigaObrera hormiga){
         decrementaNumHormigasDentro();
         getListaHormigasAlmacenComida().sacarHormiga(hormiga);
         getLog().escribirEnLog("[ALMACEN COMIDA} --> La hormiga " + hormiga.getIdentificador() + " ha salido del almacen de comida");
         semaforoEntradaSalida.release();
     }
 
-    //Método para realizar una operación sobre la variable de numero de elementos de comida
-
-
     //Método para que una hormiga deposite un elemento de comida
-    public synchronized void depositaElementoComida(Hormiga hormiga){
+    public void depositaElementoComida(HormigaObrera hormiga){
         recogeElemento.lock();
         try{
-            setNumElementosComida(getNumElementosComida() + 5); //Primero depositamos
-            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha depositado un elemento de comida en el almacen de comida");
+            setNumElementosComida(getNumElementosComida() + 5); //Primero depositamos 5 elementos de comida
+            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha depositado 5 elementos de comida en el almacen de comida");
             if(getNumHormigasEsperando() > 0){ //Mirar si hay hormigas esperando elementos de comida
                 //Verificamos que hay hormigas esperando
                 conditionElementoComida.signal(); //Despierta a la hormiga porque ya hay un elemento de comida presente
+                setNumHormigasEsperando(getNumHormigasEsperando() - 1);
             }
             //Si no hay hormigas esperando, no tiene sentido dar signal, ya que no despertaría a nadie
         }
@@ -68,20 +76,13 @@ public class AlmacenComida {
     }
 
     //Método para que una hormiga recoja un elemento de comida
-    public void recogeElementoComida(Hormiga hormiga){
+    public void recogeElementoComida(HormigaObrera hormiga){
         recogeElemento.lock();
         try{
-            //Primero debemos ver si nos tenemos que dormir o no
-            if((getNumElementosComida() <= 0) || (getNumHormigasEsperando() > 0)){ //Si no hay elementos de comida o hay hormigas esperando
-                setNumHormigasEsperando(getNumHormigasEsperando() + 1); //Incrementamos en 1 el numero de hormigas esperando
-                conditionElementoComida.await();
-                setNumHormigasEsperando(getNumHormigasEsperando() - 1); //Decrementamos en 1 el numero de hormigas esperando
-            }
             setNumElementosComida(getNumElementosComida() - 5); //Recogemos un elemento de comida
-            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha recogido un elemento de comida del almacen de comida");
+            getLog().escribirEnLog("[ALMACEN COMIDA] --> La hormiga " + hormiga.getIdentificador() + " ha recogido 5 elementos de comida del almacen de comida");
         }
-        catch (InterruptedException ignored){}
-        finally{
+        finally {
             recogeElemento.unlock();
         }
     }
