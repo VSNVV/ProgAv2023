@@ -16,13 +16,13 @@ public class GestorInterfaz extends UnicastRemoteObject implements InterfazColon
     }
 
     //Método que devuelve el numero de hormigas obreras en el exterior de la colonia
-    public String numHomrigasObrerasExteriorColonia() throws RemoteException {
+    public String numHormigasObrerasExteriorColonia() throws RemoteException {
         ArrayList<Hormiga> lista = getColonia().getListaHormigasBuscandoComida().getListaHormigas();
         return cuentaHormigasArraylist(lista);
     }
 
     //Método que devuelve el numero de hormigas obreras dentro de la colonia
-    public String numHomrigasObrerasInteriorColonia() throws RemoteException {
+    public String numHormigasObrerasInteriorColonia() throws RemoteException {
         ArrayList<Hormiga> lista = getColonia().getListaHormigas();
         return cuentaHormigasTipoArraylist(lista, "Obrera");
     }
