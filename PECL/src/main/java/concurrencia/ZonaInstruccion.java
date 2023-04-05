@@ -6,9 +6,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ZonaInstruccion {
     //Atributos de la clase ZonaInstruccion
-    private Log log;
-    private Lock entradaSalida = new ReentrantLock();
-    private ListaThreads listaHormigasHaciendoInstruccion;
+    private final Log log;
+    private final Lock entradaSalida = new ReentrantLock();
+    private final ListaThreads listaHormigasHaciendoInstruccion;
 
     //Métodos de la clase ZonaInstruccion
 
@@ -19,7 +19,7 @@ public class ZonaInstruccion {
     }
 
     //Método para entrar a la zona de instruccion
-    public void entraZonaInstruccion(Hormiga hormiga) throws InterruptedException{
+    public void entraZonaInstruccion(Hormiga hormiga){
         entradaSalida.lock();
         try{
             //Cuando entra una hormiga, mete su ID al JTextField correspondiente mediante el ListaThreads
