@@ -23,8 +23,8 @@ public class ClienteDeColonia extends javax.swing.JFrame {
     public void actualizaJTextFields(){
         try{
             InterfazColonia objetoRemoto = (InterfazColonia) Naming.lookup("//localhost/ObjetoColonia");
-            getjTextFieldNumHormigasObrerasExteriorColonia().setText(objetoRemoto.numHomrigasObrerasExteriorColonia());
-            getjTextFieldNumHormigasObrerasInteriorColonia().setText(objetoRemoto.numHomrigasObrerasInteriorColonia());
+            getjTextFieldNumHormigasObrerasExteriorColonia().setText(objetoRemoto.numHormigasObrerasExteriorColonia());
+            getjTextFieldNumHormigasObrerasInteriorColonia().setText(objetoRemoto.numHormigasObrerasInteriorColonia());
             getjTextFieldNumHormigasSoldadoInstruccion().setText(objetoRemoto.numHormigasSoldadoInstruccion());
             getjTextFieldNumHormigasSoldadoInvasion().setText(objetoRemoto.numHormigasSoldadoInvasion());
             getjTextFieldNumHomrigasCriaZonaComer().setText(objetoRemoto.numHormigasCriaZonaComer());
