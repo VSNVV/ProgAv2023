@@ -14,7 +14,7 @@ public class HormigaCria extends Hormiga{
     public void run(){
         try{
             getPaso().mirar(); //Instruccion para que los hilos revisen si deben quedar parados o no, y recordar donde se quedaron parados
-            getColonia().entraColonia(this); //La hormiga entra a la colonia, sea del tipo que sea
+            getColonia().entra(this); //La hormiga entra a la colonia, sea del tipo que sea
             while(true){
                 rutina();
             }
@@ -35,8 +35,7 @@ public class HormigaCria extends Hormiga{
     //Método que realiza la rutina de una hormiga cria
     private void rutina() throws InterruptedException{
         getPaso().mirar(); //Instruccion para que los hilos revisen si deben quedar parados o no, y recordar donde se quedaron parados
-        //Verificamos que la hormiga es de tipo cría
-        //UNa vez dentro de la colonia, van a la zona de comer
+        //Una vez dentro de la colonia, van a la zona de comer
         getColonia().getZonaComer().entra(this);
         getPaso().mirar();
         //Una vez dentro de la zona de comer, cogen un alimento
