@@ -12,7 +12,7 @@ public class HormigaSoldado extends Hormiga{
     public void run(){
         try{
             getPaso().mirar(); //Instruccion para que los hilos revisen si deben quedar parados o no, y recordar donde se quedaron parados
-            getColonia().entraColonia(this); //La hormiga entra a la colonia, sea del tipo que sea
+            getColonia().entra(this); //La hormiga entra a la colonia, sea del tipo que sea
         }catch(InterruptedException ignored){}
         while(true){
             try{
@@ -41,13 +41,13 @@ public class HormigaSoldado extends Hormiga{
         //Verificamos que la hormiga es de tipo soldada
         //Una vez dentro de la colonia, se irán a la zona de instrucción
         getPaso().mirar();
-        getZonaInstruccion().entraZonaInstruccion(this);
+        getZonaInstruccion().entra(this);
         getPaso().mirar();
         //Una vez dentro de la zona de instruccion, hacen entre 2 y 8 segundos de instruccion
         getZonaInstruccion().realizaInstruccion(this);
         getPaso().mirar();
         //Una vez que haya hecho la instrucción, saldrá de la zona de instrucción
-        getZonaInstruccion().saleZonaInstruccion(this);
+        getZonaInstruccion().sale(this);
         getPaso().mirar();
         //Una vez fuera de la zona de instrucción, se irá a a zona de descanso
         getZonaDescanso().entra(this);
