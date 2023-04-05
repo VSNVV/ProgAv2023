@@ -12,7 +12,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     private final Lock entradaColonia = new ReentrantLock(); //Lock del tunel para entrar a la colonia
     private final Lock salidaColonia1 = new ReentrantLock(); //Lock del primer tunel de salida de la colonia
     private final Lock salidaColonia2 = new ReentrantLock(); //Lock del segundo tunel de salida de la colonia
-    private final ArrayList<Hormiga> listaHormigas = new ArrayList<>();
+    private final ArrayList<Hormiga> listaHormigas = new ArrayList<>(); //Lista que contiene todas las hormigas que han entrado a la colonia
     private final ListaThreads listaHormigasBuscandoComida; //ListaThreads para manejar el JTextField de hormigas buscando comida
     private final ListaThreads listaHormigasLlevandoComida; //ListaThreads para manejar el JTextField de hormigas llevando comida
     private final AlmacenComida almacenComida; //Almacen de comida de la colonia
@@ -46,23 +46,21 @@ public class Colonia { //Recurso compartido por todos los hilos
     }
 
     //Método para entrar a la colonia
-    public void entraColonia(Hormiga hormiga){
+    public void entra(Hormiga hormiga){
         entradaColonia.lock();
-        //A todas las hormigas que entran les añadimos a un arraylist
-        getListaHormigas().add(hormiga);
+        getListaHormigas().add(hormiga); //A todas las hormigas que entran les añadimos a un arraylist
+        getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
         if(hormiga.getTipo().equals("Soldada")){
             try{
                 hormiga.getPaso().mirar();
             }catch (InterruptedException ignored){}
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
-            getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
             entradaColonia.unlock();
             getInvasion().realizaInvasion(hormiga); //Si la invasion no está activa este método serña inutil
         }
         else if(hormiga.getTipo().equals("Cria")){
             entradaColonia.unlock();
-            getRefugio().protegeRefugio(hormiga);
-            //Si no está activo, esta función será inutil
+            getRefugio().protegeRefugio(hormiga); //Si no está activo, esta función será inutil
         }
         else{
             entradaColonia.unlock();
@@ -70,7 +68,7 @@ public class Colonia { //Recurso compartido por todos los hilos
     }
 
     //Método para que las hormigas obreras salgan de la colonia
-    public void saleColonia(Hormiga hormiga){
+    public void sale(Hormiga hormiga){
         if(salidaColonia1.tryLock()){
             try{
                 //Se verifica que el tunel de salida 1 está libre, por tanto puede salir por ese tunel
@@ -102,7 +100,7 @@ public class Colonia { //Recurso compartido por todos los hilos
             }
             else if(getZonaInstruccion().getListaHormigasHaciendoInstruccion().getListaHormigas().contains(hormiga)){
                 //Está haciendo instruccion, por tanto se va de ZonaInstruccion
-                getZonaInstruccion().saleZonaInstruccion(hormiga);
+                getZonaInstruccion().sale(hormiga);
             }
             else if(getZonaDescanso().getListaHormigasDescansando().getListaHormigas().contains(hormiga)){
                 //Está haciendo un descanso, por tanto saldrán del descanso
