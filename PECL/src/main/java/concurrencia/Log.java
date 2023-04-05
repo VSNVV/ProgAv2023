@@ -4,15 +4,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.Thread.sleep;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Log {
-    //Atributos de la clase log
-    private final  String ruta;
-    private final  File file;
+    private final File file;
     private final boolean debug;
 
     //Métodos de la clase log
@@ -20,7 +17,8 @@ public class Log {
     //Método constructor
     public Log(boolean debug) {
         this.debug = debug;
-        ruta = "debug.log";
+        //Atributos de la clase log
+        String ruta = "debug.log";
         this.file = new File(ruta);
         //Creamos el archivo log
         if(debug) {
