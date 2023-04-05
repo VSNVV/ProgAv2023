@@ -1,19 +1,20 @@
 package concurrencia;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Invasion {
     //Atributos de la clase Invasion
-    private Log log;
+    private final Log log;
     private int numHormigasSoldado = 0;
     private boolean activa = false;
     private boolean enCurso = false;
-    private Lock cerrojoInvasion = new ReentrantLock();
-    private Condition conditionInvasion = cerrojoInvasion.newCondition();
-    private ListaThreads listaHormigasInvasion;
+    private final Lock cerrojoInvasion = new ReentrantLock();
+    private final Condition conditionInvasion = cerrojoInvasion.newCondition();
+    private final ListaThreads listaHormigasInvasion;
     //Métodos de la clase Invasion
 
     //Método constructor
@@ -46,7 +47,7 @@ public class Invasion {
                 hormiga.getPaso().mirar();
                 sale(hormiga);
             }
-        }catch (InterruptedException ie){}
+        }catch (InterruptedException ignored){}
         cerrojoInvasion.unlock();
     }
 
@@ -62,7 +63,7 @@ public class Invasion {
         hormiga.getColonia().getEntradaColonia().lock();
         boolean result;
         int numHormigasInvasion = getNumHormigasSoldado();
-        int numHormigasSoldadoColonia = hormiga.getColonia().cuentaSoldadas();
+        int numHormigasSoldadoColonia = cuentaSoldadasColonia(hormiga.getColonia().getListaHormigas());
         result = numHormigasInvasion == numHormigasSoldadoColonia;
         hormiga.getColonia().getEntradaColonia().unlock();
 
@@ -80,6 +81,16 @@ public class Invasion {
         }
     }
 
+    private int cuentaSoldadasColonia(ArrayList<Hormiga> lista){
+        int resultado = 0;
+        for (Hormiga hormigaActual : lista) {
+            String tipo = hormigaActual.getTipo();
+            if (tipo.equals("Soldada")) {
+                resultado = resultado + 1;
+            }
+        }
+        return resultado;
+    }
 
     //Métodos get y set
 
@@ -116,7 +127,4 @@ public class Invasion {
         return listaHormigasInvasion;
     }
 
-    public Lock getCerrojoInvasion() {
-        return cerrojoInvasion;
-    }
 }
