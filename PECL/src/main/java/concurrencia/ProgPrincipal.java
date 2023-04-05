@@ -12,7 +12,6 @@ import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Formatter;
-import java.util.concurrent.locks.Lock;
 
 /**
  *
@@ -65,7 +64,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             HormigaSoldado hormigaSoldado = new HormigaSoldado(getColonia(), identificadorSoldado);
             hormigaSoldado.setName(identificadorSoldado);
             hormigaSoldado.start();
-            identificadorSoldado = "";
+            identificadorSoldado = null;
             setNumHormigasSoldado(getNumHormigasSoldado() + 1);
             //getColonia().setNumHormigasSoldado(getNumHormigasSoldado());
 
@@ -81,7 +80,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
             //Esperamos entre 0.8 y 3.5 segundos para hacer la siguiente ronda
             try{
                 Thread.sleep((int) (((Math.random() + 1) * 800) + (3500 - (800 * 2))));
-            }catch(InterruptedException ie){}
+            }catch(InterruptedException ignored){}
             setNumTotalHormigas(getNumTotalHormigas() + 5);
         }
     }
