@@ -60,7 +60,7 @@ public class Refugio {
         //Una vez fuera del JTextField, escribimos el evento en el log
         getLog().escribirEnLog("[REFUGIO] --> La hormiga " + hormiga.getIdentificador() + " ha salido del refugio");
         if(getNumHormigasRefugio() == 0){
-            setActivo(false);
+            setActivo(false); //Como el refugio está vacio, no estará activo
         }
     }
 
@@ -68,7 +68,6 @@ public class Refugio {
     public void despiertaRefugio(){
         try{
             cerrojoRefugio.lock();
-            setActivo(false); //El refugio no estará activo
             finInvasion.signalAll(); //Despertamos a las crias que están dentro del refugio
         }
         finally{
