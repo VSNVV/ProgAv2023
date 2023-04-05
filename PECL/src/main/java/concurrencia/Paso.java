@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Paso{
     //Atributos de la clase Paso
     private boolean cerrado = false;
-    private Lock cerrojo = new ReentrantLock();
-    private Condition parar = cerrojo.newCondition();
+    private final Lock cerrojo = new ReentrantLock();
+    private final Condition parar = cerrojo.newCondition();
 
     //Métodos de la clase Paso
 
