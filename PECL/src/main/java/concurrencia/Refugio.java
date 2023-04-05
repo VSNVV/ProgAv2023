@@ -7,12 +7,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Refugio {
     //Atributos de la clase Refugio
-    private Log log; //Log del sistema concurrente
+    private final Log log; //Log del sistema concurrente
     private boolean activo = false;
     private int numHormigasRefugio = 0;
-    private Lock cerrojoRefugio = new ReentrantLock();
-    private Condition finInvasion = cerrojoRefugio.newCondition(); //Condition para que las hormigas esperen al fin de la invasion
-    private ListaThreads listaHormigasRefugio; //ListaThreads para manejar el JTextField del refugio de la interfaz
+    private final Lock cerrojoRefugio = new ReentrantLock();
+    private final Condition finInvasion = cerrojoRefugio.newCondition(); //Condition para que las hormigas esperen al fin de la invasion
+    private final ListaThreads listaHormigasRefugio; //ListaThreads para manejar el JTextField del refugio de la interfaz
 
     //Métodos de la clase Refugio
 
@@ -33,11 +33,11 @@ public class Refugio {
                 try{
                     finInvasion.await();
                     hormiga.getPaso().mirar();
-                }catch(InterruptedException ie){}
+                }catch(InterruptedException ignored){}
                 sale(hormiga);
             }
         }
-        catch(InterruptedException ie){}
+        catch(InterruptedException ignored){}
         finally{
             cerrojoRefugio.unlock();
         }
@@ -97,10 +97,6 @@ public class Refugio {
 
     public void setActivo(boolean activo){
         this.activo = activo;
-    }
-
-    public Lock getCerrojoRefugio() {
-        return cerrojoRefugio;
     }
 
     public int getNumHormigasRefugio() {
