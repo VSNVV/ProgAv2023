@@ -132,6 +132,7 @@ public class ClienteDeColonia extends javax.swing.JFrame {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonGeneraInvasion.setText("Generar Amenaza Insecto Invasor");
+        jButtonGeneraInvasion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButtonGeneraInvasion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonGeneraInvasionActionPerformed(evt);
