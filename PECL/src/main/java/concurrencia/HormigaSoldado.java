@@ -31,8 +31,18 @@ public class HormigaSoldado extends Hormiga{
                 try{
                     getPaso().mirar();
                 }catch(InterruptedException ignored){}
+                //Para realizar la invasión, tienen que salir de la colonia
+                getColonia().sale(this);
+                try{
+                    getPaso().mirar();
+                }catch(InterruptedException ignored){}
                 //Código de la invasion
                 getColonia().getInvasion().realizaInvasion(this);
+                //Una vez acabada la invasión, tendrán que entrar de nuevo a la colonia
+                try{
+                    getPaso().mirar();
+                }catch(InterruptedException ignored){}
+                getColonia().entra(this);
             }
         }
     }
