@@ -48,7 +48,12 @@ public class Colonia { //Recurso compartido por todos los hilos
     //Método para entrar a la colonia
     public void entra(Hormiga hormiga){
         entradaColonia.lock();
-        getListaHormigas().add(hormiga); //A todas las hormigas que entran les añadimos a un arraylist
+        try{
+            Thread.sleep(100);
+        }catch(InterruptedException ignored){}
+        if(!getListaHormigas().contains(hormiga)){
+            getListaHormigas().add(hormiga); //A todas las hormigas que entran les añadimos a un arraylist
+        }
         getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha entrado a la colonia");
         if(hormiga.getTipo().equals("Soldada")){
             try{
@@ -72,6 +77,9 @@ public class Colonia { //Recurso compartido por todos los hilos
         if(salidaColonia1.tryLock()){
             try{
                 //Se verifica que el tunel de salida 1 está libre, por tanto puede salir por ese tunel
+                try{
+                    Thread.sleep(100);
+                }catch(InterruptedException ignored){}
                 getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la colonia por el tunel de salida 1");
 
             }finally{
@@ -82,8 +90,12 @@ public class Colonia { //Recurso compartido por todos los hilos
             //Como el tunel de salida 1 está ocupado en ese momento, la hormiga intentará salir por el tunel de salida 2
             salidaColonia2.lock();
             try{
+                Thread.sleep(100);
                 getLog().escribirEnLog("[COLONIA] --> La hormiga " + hormiga.getIdentificador() + " ha salido de la colonia por el tunel de salida 2");
-            }finally{
+            }
+            catch (InterruptedException ignored) {}
+
+            finally{
                 salidaColonia2.unlock();
             }
         }
