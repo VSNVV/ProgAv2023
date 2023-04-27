@@ -211,6 +211,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jPanel2.add(jTextFieldHormigasRefugio, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 1010, 110));
 
         jButtonPausarReanudar.setText("Pausar");
+        jButtonPausarReanudar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButtonPausarReanudar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPausarReanudarActionPerformed(evt);
@@ -219,6 +220,7 @@ public class ProgPrincipal extends javax.swing.JFrame {
         jPanel2.add(jButtonPausarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 440, 150, 40));
 
         jButtonGenerarAmenazaInsectoInvasor.setText("Generar amenaza de insecto invasor");
+        jButtonGenerarAmenazaInsectoInvasor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButtonGenerarAmenazaInsectoInvasor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonGenerarAmenazaInsectoInvasorActionPerformed(evt);
