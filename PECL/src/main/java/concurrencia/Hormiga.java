@@ -6,7 +6,6 @@ public class Hormiga extends Thread{
     private int numIteraciones = 0;
     private final String tipo;
     private final Colonia colonia;
-    private Log log;
     //Zonas de la clonia (escritas para codigo más legible)
     private final AlmacenComida almacenComida;
     private final ZonaComer zonaComer;
