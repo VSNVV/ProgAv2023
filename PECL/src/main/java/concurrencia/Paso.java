@@ -29,7 +29,7 @@ public class Paso{
             cerrojo.unlock();
         }
     }
-    //Método para reanudar ejecucion de hilos
+    //Método para reanudar la ejecucion de hilos
     public void abrir() {
         try{
             cerrojo.lock();
@@ -40,7 +40,7 @@ public class Paso{
             cerrojo.unlock();
         }
     }
-    //Métodos para reanuar ejecucion de hilos
+    //Métodos para detener la ejecucion de hilos
     public void cerrar() {
         try{
             cerrojo.lock();
