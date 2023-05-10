@@ -124,7 +124,7 @@ public class Colonia { //Recurso compartido por todos los hilos
 
     //Método para generar una invasion
     public void generaInvasion(){
-        if (!getInvasion().isActiva() && !getRefugio().isActivo()){
+        if (!getInvasion().isActiva() && !getRefugio().isActivo() && !getPaso().isCerrado()){
             getInvasion().setActiva(true);
             getRefugio().setActivo(true);
             getLog().escribirEnLog("[INVASION] --> Se ha generado una invasion");
