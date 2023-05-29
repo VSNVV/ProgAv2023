@@ -86,9 +86,7 @@ public class AlmacenComida {
             recogeElemento.unlock();
         }
     }
-
-
-
+    
     //Métodos get y set
 
     public void incrementaNumHormigasDentro(){
